@@ -1,191 +1,193 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Model AI</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Model AI Assistant</title>
 
-<style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial;background:#f7f7f8;height:100vh;display:flex}
+  <style>
+    body{
+      margin:0;
+      font-family:Arial, sans-serif;
+      background:#0f172a;
+      color:white;
+    }
 
-/* SIDEBAR */
-.sidebar{width:260px;background:#111;color:#fff;display:flex;flex-direction:column;padding:12px}
-.logo{font-size:18px;font-weight:bold;margin-bottom:12px}
-.new-chat{background:#10a37f;border:none;color:#fff;padding:10px;border-radius:10px;cursor:pointer;margin-bottom:10px}
-.history{flex:1;overflow:auto;font-size:14px}
-.history div{padding:8px;border-radius:8px;cursor:pointer}
-.history div:hover{background:#222}
+    .center{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      height:100vh;
+    }
 
-/* MAIN */
-.main{flex:1;display:flex;flex-direction:column}
-.topbar{padding:12px 16px;border-bottom:1px solid #ddd;display:flex;justify-content:space-between;align-items:center;background:#fff}
-.chat{flex:1;overflow:auto;padding:20px;display:flex;flex-direction:column;gap:12px}
+    #loginBox{
+      background:#1e293b;
+      padding:30px;
+      border-radius:12px;
+      text-align:center;
+      box-shadow:0 0 20px #000;
+    }
 
-.msg{max-width:700px;padding:12px 16px;border-radius:16px}
-.user{align-self:flex-end;background:#10a37f;color:#fff}
-.bot{background:#fff;border:1px solid #ddd}
+    button{
+      padding:10px 16px;
+      margin:6px;
+      border:none;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:bold;
+    }
 
-/* INPUT */
-.input-area{border-top:1px solid #ddd;padding:10px;background:#fff;display:flex;gap:8px}
-.input-area input{flex:1;padding:12px;border-radius:10px;border:1px solid #ccc}
-.send{background:#10a37f;border:none;color:#fff;padding:10px 18px;border-radius:10px;cursor:pointer}
+    .google{background:#ef4444;color:white;}
+    .email{background:#3b82f6;color:white;}
+    .logout{background:#22c55e;color:white;}
 
-/* LOGIN */
-.login{position:fixed;inset:0;background:#0008;display:flex;align-items:center;justify-content:center}
-.login-box{background:#fff;padding:20px;border-radius:12px;text-align:center;width:260px}
-.login-box button{margin:6px 0;padding:10px;width:100%}
+    #chatUI{display:none;height:100vh;flex-direction:column;}
 
-/* DARK MODE */
-.dark body{background:#0b0b0c}
-.dark .topbar{background:#111;color:#fff;border-color:#222}
-.dark .bot{background:#1a1a1b;border-color:#333;color:#fff}
-.dark .input-area{background:#111;border-color:#222}
-.dark .input-area input{background:#1a1a1b;color:#fff;border-color:#333}
-</style>
+    .header{
+      background:#020617;
+      padding:12px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      border-bottom:1px solid #334155;
+    }
+
+    .chatBox{
+      flex:1;
+      overflow-y:auto;
+      padding:20px;
+    }
+
+    .msg{
+      margin:10px 0;
+      padding:12px;
+      border-radius:10px;
+      max-width:70%;
+    }
+
+    .user{background:#22c55e;margin-left:auto;}
+    .bot{background:#1e293b;}
+
+    .inputArea{
+      display:flex;
+      padding:10px;
+      background:#020617;
+      border-top:1px solid #334155;
+    }
+
+    input{
+      flex:1;
+      padding:12px;
+      border-radius:8px;
+      border:none;
+      outline:none;
+    }
+
+    .send{background:#22c55e;color:white;}
+  </style>
 </head>
 
 <body>
 
-<div class="sidebar">
-<div class="logo">Model AI</div>
-<button class="new-chat" onclick="newChat()">+ New Chat</button>
-<div id="history" class="history"></div>
-<button onclick="toggleTheme()">🌙 Toggle Theme</button>
-<button onclick="logout()">Logout</button>
-</div>
-
-<div class="main">
-<div class="topbar">AI Assistant</div>
-
-<div id="chat" class="chat"></div>
-
-<div class="input-area">
-<input id="q" placeholder="Ask anything or type: image cat" />
-<button class="send" onclick="ask()">Send</button>
-</div>
-</div>
-
 <!-- LOGIN -->
-<div id="login" class="login" style="display:none">
-<div class="login-box">
-<h2>Login</h2>
-<button onclick="googleLogin()">Google Login</button>
-<button onclick="emailLogin()">Email Login</button>
-<button onclick="emailSignup()">Sign Up</button>
-</div>
+<div id="loginBox" class="center">
+  <div>
+    <h2>Login to Model AI</h2>
+    <button class="google" onclick="googleLogin()">Google Login</button><br>
+    <button class="email" onclick="emailLogin()">Email Login</button><br>
+    <button class="email" onclick="emailSignup()">Sign Up</button>
+  </div>
 </div>
 
-<!-- FIREBASE -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<!-- CHAT UI -->
+<div id="chatUI">
+  <div class="header">
+    <h3>Model AI Assistant</h3>
+    <button class="logout" onclick="logout()">Logout</button>
+  </div>
 
-<script>
+  <div class="chatBox" id="chatBox"></div>
+
+  <div class="inputArea">
+    <input id="msgInput" placeholder="Ask anything or type: image cat" />
+    <button class="send" onclick="sendMsg()">Send</button>
+  </div>
+</div>
+
+<!-- FIREBASE + CHAT SCRIPT -->
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
 const firebaseConfig = {
   apiKey: "AIzaSyDUcWSbU-ELP7Erx9yGPbq65clsn2ME8pk",
   authDomain: "model-ai-727b1.firebaseapp.com",
   projectId: "model-ai-727b1",
   storageBucket: "model-ai-727b1.firebasestorage.app",
   messagingSenderId: "970799402645",
-  appId: "1:970799402645:web:4e2a93dbacbfd6ee97d59c",
-  measurementId: "G-0EW8BHNTH3"
+  appId: "1:970799402645:web:4e2a93dbacbfd6ee97d59c"
 };
 
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
 
-/* LOGIN */
-async function googleLogin(){
-  const provider=new firebase.auth.GoogleAuthProvider();
-  await auth.signInWithPopup(provider);
-}
+window.googleLogin = async () => {
+  try { await signInWithPopup(auth, provider); }
+  catch(e){ alert(e.message); }
+};
 
-async function emailLogin(){
-  const email=prompt("Email:");
-  const pass=prompt("Password:");
-  await auth.signInWithEmailAndPassword(email,pass);
-}
+window.emailLogin = async () => {
+  const email = prompt("Enter email");
+  const pass = prompt("Enter password");
+  await signInWithEmailAndPassword(auth, email, pass);
+};
 
-async function emailSignup(){
-  const email=prompt("Create Email:");
-  const pass=prompt("Create Password:");
-  await auth.createUserWithEmailAndPassword(email,pass);
-}
+window.emailSignup = async () => {
+  const email = prompt("Create email");
+  const pass = prompt("Create password");
+  await createUserWithEmailAndPassword(auth, email, pass);
+};
 
-async function logout(){
-  await auth.signOut();
-}
+window.logout = () => signOut(auth);
 
-/* LOGIN STATE */
-auth.onAuthStateChanged(user=>{
-  document.getElementById("login").style.display = user ? "none" : "flex";
+onAuthStateChanged(auth, user => {
+  document.getElementById("loginBox").style.display = user ? "none" : "flex";
+  document.getElementById("chatUI").style.display = user ? "flex" : "none";
 });
 
-/* CHAT */
-const chat=document.getElementById("chat");
+// CHAT FUNCTION
+window.sendMsg = async () => {
+  const input = document.getElementById("msgInput");
+  const chat = document.getElementById("chatBox");
 
-function add(text,type){
-  const d=document.createElement("div");
-  d.className="msg "+type;
-  d.innerText=text;
-  chat.appendChild(d);
-  chat.scrollTop=chat.scrollHeight;
-}
+  const text = input.value.trim();
+  if(!text) return;
 
-async function ask(){
-  const q=document.getElementById("q");
-  const msg=q.value.trim();
-  if(!msg) return;
+  chat.innerHTML += `<div class="msg user">${text}</div>`;
+  input.value="";
 
-  add(msg,"user");
-  saveHistory(msg);
-  q.value="";
-
-  if(msg.toLowerCase().startsWith("image")){
-    const img=document.createElement("img");
-    img.src=`https://image.pollinations.ai/prompt/${encodeURIComponent(msg)}`;
-    img.style.maxWidth="200px";
-    chat.appendChild(img);
-    return;
-  }
-
-  add("Thinking...","bot");
-
-  const res=await fetch("/api/chat",{
+  const res = await fetch("/api/chat",{
     method:"POST",
     headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({message:msg})
+    body:JSON.stringify({message:text})
   });
 
-  const data=await res.json();
-  chat.lastChild.remove();
-  add(data.reply||"Error","bot");
-}
+  const data = await res.json();
 
-/* HISTORY */
-function saveHistory(t){
-  const arr=JSON.parse(localStorage.getItem("h")||"[]");
-  arr.unshift(t);
-  localStorage.setItem("h",JSON.stringify(arr.slice(0,20)));
-  renderHistory();
-}
+  chat.innerHTML += `<div class="msg bot">${data.reply}</div>`;
+  chat.scrollTop = chat.scrollHeight;
+};
 
-function renderHistory(){
-  const h=document.getElementById("history");
-  h.innerHTML="";
-  (JSON.parse(localStorage.getItem("h")||"[]")).forEach(t=>{
-    const d=document.createElement("div");
-    d.textContent=t;
-    d.onclick=()=>document.getElementById("q").value=t;
-    h.appendChild(d);
-  });
-}
-renderHistory();
-
-/* THEME */
-function toggleTheme(){
-  document.documentElement.classList.toggle("dark");
-}
 </script>
 
 </body>
