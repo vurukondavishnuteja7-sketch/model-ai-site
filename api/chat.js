@@ -1,16 +1,13 @@
-// Simple AI Chatbot Frontend Script (chat.js)
-// Works with a basic HTML page containing:
-// - #chat-box (messages container)
-// - #user-input (text input)
-// - #send-btn (send button)
+// Secure AI Chatbot Frontend Script (chat.js)
+// NOTE: Do NOT expose your OpenAI API key in frontend JS.
+// This version connects to your own backend (server.js / API route).
 
 const chatBox = document.getElementById("chat-box");
 const userInput = document.getElementById("user-input");
 const sendBtn = document.getElementById("send-btn");
 
-// 🔑 Add your API key here
-const API_KEY = "YOUR_API_KEY_HERE";
-const API_URL = "https://api.openai.com/v1/chat/completions";
+// 🔗 Your backend endpoint (change if needed)
+const API_URL = "/api/chat";
 
 // Add message to UI
 function addMessage(text, sender) {
@@ -21,7 +18,7 @@ function addMessage(text, sender) {
   chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-// Send message to AI
+// Send message to backend AI
 async function sendMessage() {
   const text = userInput.value.trim();
   if (!text) return;
@@ -37,27 +34,19 @@ async function sendMessage() {
   try {
     const response = await fetch(API_URL, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: "gpt-4o-mini",
-        messages: [{ role: "user", content: text }],
-      }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: text }),
     });
 
     const data = await response.json();
     loadingMsg.remove();
 
-    const reply =
-      data.choices?.[0]?.message?.content || "Sorry, no response.";
-
+    const reply = data.reply || "No response from AI.";
     addMessage(reply, "bot");
   } catch (error) {
     loadingMsg.remove();
-    addMessage("Error connecting to AI.", "bot");
-    console.error(error);
+    addMessage("⚠️ AI connection error. Check backend/server.", "bot");
+    console.error("AI Error:", error);
   }
 }
 
@@ -68,4 +57,4 @@ userInput.addEventListener("keypress", (e) => {
 });
 
 // Welcome message
-addMessage("Hello! I am your AI assistant. Ask me anything 😊", "bot");
+addMessage("Hello! I am your AI assistant 🤖 Ask me anything.", "bot");
