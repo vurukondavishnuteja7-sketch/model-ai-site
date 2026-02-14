@@ -16,7 +16,6 @@
       height: 100vh;
     }
 
-    /* Sidebar */
     .sidebar {
       width: 260px;
       background: #ffffff;
@@ -41,10 +40,8 @@
     .history div { padding: 8px; border-radius: 8px; cursor: pointer; }
     .history div:hover { background: #f3f4f6; }
 
-    /* Main */
     .main { flex: 1; display: flex; flex-direction: column; }
 
-    /* Top bar */
     .topbar {
       padding: 12px 20px;
       border-bottom: 1px solid #e5e7eb;
@@ -52,11 +49,9 @@
       justify-content: space-between;
       align-items: center;
       background: #ffffff;
+      font-weight: 600;
     }
 
-    .title { font-weight: 600; font-size: 16px; }
-
-    /* Chat */
     #chat {
       flex: 1;
       overflow-y: auto;
@@ -81,12 +76,11 @@
 
     .user .bubble { background: #10a37f; color: white; border: none; }
 
-    /* Floating input like ChatGPT */
     .input-wrapper {
       padding: 16px;
-      background: transparent;
       display: flex;
       justify-content: center;
+      background: transparent;
     }
 
     .input-area {
@@ -108,6 +102,7 @@
       padding: 8px 10px;
       border-radius: 10px;
       cursor: pointer;
+      font-size: 16px;
     }
 
     input[type="text"] {
@@ -145,16 +140,14 @@
   </div>
 
   <div class="main">
-    <div class="topbar">
-      <div class="title">Model AI</div>
-    </div>
+    <div class="topbar">Model AI</div>
 
     <div id="chat"></div>
 
-    <!-- Floating centered input -->
     <div class="input-wrapper">
       <div class="input-area">
-        <button class="upload-btn" onclick="alert('Image upload coming soon')">+</button>
+        <input type="file" id="imgUpload" hidden accept="image/*" />
+        <button class="upload-btn" onclick="document.getElementById('imgUpload').click()">+</button>
         <input id="q" type="text" placeholder="Ask anything…  (try: image of lion)" />
         <button class="send" onclick="ask()">Send</button>
       </div>
@@ -195,6 +188,18 @@
 
     function newChat() { chat.innerHTML = ""; }
 
+    // IMAGE UPLOAD PREVIEW
+    document.getElementById("imgUpload").addEventListener("change", function () {
+      const file = this.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        addMessage("Uploaded image:", "user", [e.target.result]);
+      };
+      reader.readAsDataURL(file);
+    });
+
     async function ask() {
       const q = document.getElementById("q").value.trim();
       if (!q) return;
@@ -203,13 +208,13 @@
       saveHistory(q);
       document.getElementById("q").value = "";
 
-      // MULTI IMAGE GENERATION (8 images)
+      // MULTI IMAGE GENERATION USING UNSPLASH (stable)
       if (q.toLowerCase().startsWith("image of")) {
         const prompt = q.replace("image of", "").trim();
 
         const images = [];
-        for (let i = 1; i <= 8; i++) {
-          images.push(`https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=512&height=512&seed=${i}`);
+        for (let i = 1; i <= 6; i++) {
+          images.push(`https://source.unsplash.com/600x600/?${encodeURIComponent(prompt)}&sig=${i}`);
         }
 
         addMessage("Generated images:", "bot", images);
