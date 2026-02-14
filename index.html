@@ -1,165 +1,140 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Model AI</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Model AI</title>
 
-  <style>
-    *{box-sizing:border-box}
-    body{margin:0;font-family:Inter,Arial;background:#f7f7f8;display:flex;height:100vh}
-
-    /* Sidebar */
-    .sidebar{width:260px;background:#fff;border-right:1px solid #e5e7eb;display:flex;flex-direction:column;padding:12px}
-    .logo{font-weight:700;font-size:18px;margin-bottom:12px}
-    .new-chat{padding:10px;border:none;border-radius:10px;background:#10a37f;color:#fff;font-weight:600;cursor:pointer;margin-bottom:12px}
-    .history{flex:1;overflow-y:auto;font-size:14px}
-    .history div{padding:8px;border-radius:8px;cursor:pointer}
-    .history div:hover{background:#f3f4f6}
-
-    /* Main */
-    .main{flex:1;display:flex;flex-direction:column}
-    .topbar{padding:14px 20px;border-bottom:1px solid #e5e7eb;background:#fff;font-weight:600;display:flex;justify-content:space-between}
-    .chat{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:14px}
-
-    .msg{max-width:720px}
-    .bubble{padding:12px 16px;border-radius:16px;border:1px solid #e5e7eb;background:#fff;white-space:pre-wrap}
-    .user{align-self:flex-end}
-    .user .bubble{background:#10a37f;color:#fff;border:none}
-
-    .input-area{padding:16px;border-top:1px solid #e5e7eb;background:#fff;display:flex;justify-content:center}
-    .input-box{width:100%;max-width:900px;border:1px solid #e5e7eb;border-radius:24px;padding:10px 14px;display:flex;gap:10px;align-items:center;background:#fafafa}
-    .input-box input{flex:1;border:none;outline:none;font-size:15px;background:transparent}
-    .send-btn{background:#10a37f;color:#fff;border:none;padding:8px 16px;border-radius:12px;cursor:pointer;font-weight:600}
-    .icon-btn{border:none;background:transparent;font-size:18px;cursor:pointer}
-
-    img.ai-img{max-width:220px;border-radius:12px;border:1px solid #e5e7eb;margin-top:8px}
-
-    body.dark{background:#0f172a}
-    body.dark .sidebar,body.dark .topbar,body.dark .input-area{background:#020617;color:#fff}
-    body.dark .bubble{background:#020617;color:#fff;border-color:#1e293b}
-    body.dark .input-box{background:#020617;border-color:#1e293b}
-  </style>
+<style>
+body{margin:0;font-family:Arial;background:#f7f7f8;display:flex;height:100vh}
+.sidebar{width:250px;background:#fff;border-right:1px solid #ddd;padding:10px}
+.main{flex:1;display:flex;flex-direction:column}
+.chat{flex:1;overflow:auto;padding:20px}
+.input{display:flex;border-top:1px solid #ddd;padding:10px}
+input{flex:1;padding:10px}
+button{padding:10px 15px;margin-left:5px}
+.msg{margin:10px 0}
+.user{text-align:right}
+img{max-width:200px;border-radius:10px;margin-top:5px}
+.login{position:fixed;inset:0;background:#0008;display:flex;align-items:center;justify-content:center}
+.login-box{background:#fff;padding:20px;border-radius:10px;text-align:center}
+</style>
 </head>
 
 <body>
-  <div class="sidebar">
-    <div class="logo">Model AI</div>
-    <button class="new-chat" onclick="newChat()">+ New Chat</button>
-    <div id="history" class="history"></div>
-  </div>
 
-  <div class="main">
-    <div class="topbar">
-      <span>AI Assistant</span>
-      <span style="cursor:pointer" onclick="toggleTheme()">Theme</span>
-    </div>
+<div class="sidebar">
+<h3>Model AI</h3>
+<button onclick="logout()">Logout</button>
+</div>
 
-    <div id="chat" class="chat"></div>
+<div class="main">
+<div id="chat" class="chat"></div>
 
-    <div class="input-area">
-      <div class="input-box">
-        <button class="icon-btn" onclick="triggerUpload()">📎</button>
-        <input id="q" placeholder="Message Model AI or type: image cat" />
-        <button class="icon-btn" onclick="startVoice()">🎤</button>
-        <button class="send-btn" onclick="ask()">Send</button>
-      </div>
-      <input type="file" id="file" hidden />
-    </div>
-  </div>
+<div class="input">
+<input id="q" placeholder="Ask anything or type: image cat"/>
+<button onclick="ask()">Send</button>
+</div>
+</div>
 
-  <script>
-    const chat=document.getElementById('chat')
-    const historyDiv=document.getElementById('history')
+<!-- LOGIN SCREEN -->
+<div id="login" class="login" style="display:none">
+<div class="login-box">
+<h2>Login</h2>
+<button onclick="googleLogin()">Google Login</button><br><br>
+<button onclick="emailLogin()">Email Login</button><br><br>
+<button onclick="emailSignup()">Sign Up</button>
+</div>
+</div>
 
-    function addMessage(text,type){
-      const wrap=document.createElement('div')
-      wrap.className='msg '+type
-      const bubble=document.createElement('div')
-      bubble.className='bubble'
-      bubble.textContent=text
-      wrap.appendChild(bubble)
-      chat.appendChild(wrap)
-      chat.scrollTop=chat.scrollHeight
-    }
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 
-    function addImage(src){
-      const img=document.createElement('img')
-      img.src=src
-      img.className='ai-img'
-      chat.appendChild(img)
-      chat.scrollTop=chat.scrollHeight
-    }
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyDUcWSbU-ELP7Erx9yGPbq65clsn2ME8pk",
+  authDomain: "model-ai-727b1.firebaseapp.com",
+  projectId: "model-ai-727b1",
+  storageBucket: "model-ai-727b1.firebasestorage.app",
+  messagingSenderId: "970799402645",
+  appId: "1:970799402645:web:4e2a93dbacbfd6ee97d59c",
+  measurementId: "G-0EW8BHNTH3"
+};
 
-    function saveHistory(text){
-      const saved=JSON.parse(localStorage.getItem('modelai')||'[]')
-      saved.unshift(text)
-      localStorage.setItem('modelai',JSON.stringify(saved.slice(0,20)))
-      renderHistory()
-    }
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
 
-    function renderHistory(){
-      historyDiv.innerHTML=''
-      const saved=JSON.parse(localStorage.getItem('modelai')||'[]')
-      saved.forEach(t=>{
-        const d=document.createElement('div')
-        d.textContent=t
-        d.onclick=()=>document.getElementById('q').value=t
-        historyDiv.appendChild(d)
-      })
-    }
+/* GOOGLE LOGIN */
+async function googleLogin(){
+  const provider=new firebase.auth.GoogleAuthProvider();
+  await auth.signInWithPopup(provider);
+}
 
-    function newChat(){chat.innerHTML=''}
-    function toggleTheme(){document.body.classList.toggle('dark')}
+/* EMAIL LOGIN */
+async function emailLogin(){
+  const email=prompt("Email:");
+  const pass=prompt("Password:");
+  await auth.signInWithEmailAndPassword(email,pass);
+}
 
-    function triggerUpload(){document.getElementById('file').click()}
+/* SIGNUP */
+async function emailSignup(){
+  const email=prompt("Create Email:");
+  const pass=prompt("Create Password:");
+  await auth.createUserWithEmailAndPassword(email,pass);
+}
 
-    document.getElementById('file').addEventListener('change',e=>{
-      const f=e.target.files[0]
-      if(!f) return
-      addMessage('Uploaded: '+f.name,'user')
-    })
+/* LOGOUT */
+async function logout(){
+  await auth.signOut();
+}
 
-    function startVoice(){
-      const R=window.SpeechRecognition||window.webkitSpeechRecognition
-      if(!R) return alert('Voice not supported')
-      const r=new R()
-      r.onresult=e=>document.getElementById('q').value=e.results[0][0].transcript
-      r.start()
-    }
+/* AUTO LOGIN CHECK */
+auth.onAuthStateChanged(user=>{
+  document.getElementById("login").style.display = user ? "none" : "flex";
+});
 
-    async function ask(){
-      const input=document.getElementById('q')
-      const message=input.value.trim()
-      if(!message) return
+/* CHAT */
+const chat=document.getElementById("chat");
 
-      addMessage(message,'user')
-      saveHistory(message)
-      input.value=''
+function add(text,type){
+  const d=document.createElement("div");
+  d.className="msg "+type;
+  d.innerText=text;
+  chat.appendChild(d);
+  chat.scrollTop=chat.scrollHeight;
+}
 
-      // IMAGE MODE
-      if(message.toLowerCase().startsWith('image')){
-        const prompt=message.replace('image','').trim()
-        for(let i=0;i<4;i++){
-          addImage(`https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?seed=${i}`)
-        }
-        return
-      }
+async function ask(){
+  const q=document.getElementById("q");
+  const msg=q.value.trim();
+  if(!msg) return;
 
-      addMessage('Thinking...','bot')
+  add(msg,"user");
+  q.value="";
 
-      try{
-        const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message})})
-        const data=await res.json()
-        chat.lastChild.remove()
-        addMessage(data.reply||'Error','bot')
-      }catch{
-        chat.lastChild.remove()
-        addMessage('Connection error','bot')
-      }
-    }
+  /* IMAGE MODE */
+  if(msg.toLowerCase().startsWith("image")){
+    const img=document.createElement("img");
+    img.src=`https://image.pollinations.ai/prompt/${encodeURIComponent(msg)}`;
+    chat.appendChild(img);
+    return;
+  }
 
-    renderHistory()
-  </script>
+  add("Thinking...");
+
+  const res=await fetch("/api/chat",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({message:msg})
+  });
+
+  const data=await res.json();
+  chat.lastChild.remove();
+  add(data.reply || "Error");
+}
+</script>
+
 </body>
 </html>
