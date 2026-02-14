@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Model AI</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <style>
     body {
@@ -13,16 +13,14 @@
       color: white;
     }
 
-    .login {
-      position: fixed;
-      inset: 0;
+    .center {
       display: flex;
-      align-items: center;
       justify-content: center;
-      background: #0f172a;
+      align-items: center;
+      height: 100vh;
     }
 
-    .card {
+    .login-box {
       background: #1e293b;
       padding: 30px;
       border-radius: 12px;
@@ -43,36 +41,43 @@
     .google { background: #ef4444; color: white; }
     .email { background: #3b82f6; color: white; }
     .signup { background: #22c55e; color: white; }
+    .logout { background: #ef4444; }
 
-    #chat { display: none; height: 100vh; }
+    /* CHAT UI */
+    #chatPage { display: none; }
 
     .sidebar {
-      width: 200px;
+      width: 220px;
       background: #020617;
+      height: 100vh;
       padding: 15px;
       position: fixed;
-      top: 0;
-      bottom: 0;
     }
 
     .main {
-      margin-left: 200px;
+      margin-left: 240px;
       display: flex;
       flex-direction: column;
       height: 100vh;
     }
 
-    .msgs {
+    .messages {
       flex: 1;
-      padding: 20px;
       overflow-y: auto;
+      padding: 20px;
     }
 
-    .msg { margin: 10px 0; }
-    .user { text-align: right; color: #22c55e; }
-    .bot { text-align: left; color: #e2e8f0; }
+    .msg {
+      padding: 10px 14px;
+      margin: 10px 0;
+      border-radius: 10px;
+      max-width: 70%;
+    }
 
-    .inputBox {
+    .user { background: #22c55e; margin-left: auto; }
+    .bot { background: #334155; }
+
+    .input-box {
       display: flex;
       padding: 10px;
       background: #020617;
@@ -88,40 +93,144 @@
     .send {
       background: #22c55e;
       color: white;
-      width: 90px;
       margin-left: 10px;
+      padding: 10px 16px;
     }
   </style>
 </head>
 <body>
 
-<!-- LOGIN -->
-<div class="login" id="loginBox">
-  <div class="card">
-    <h2>Login</h2>
+<!-- LOGIN PAGE -->
+<div id="loginPage" class="center">
+  <div class="login-box">
+    <h2>Login to Model AI</h2>
     <button class="google" onclick="googleLogin()">Google Login</button>
     <button class="email" onclick="emailLogin()">Email Login</button>
-    <button class="signup" onclick="signUp()">Sign Up</button>
+    <button class="signup" onclick="signup()">Sign Up</button>
   </div>
 </div>
 
-<!-- CHAT -->
-<div id="chat">
+<!-- CHAT PAGE -->
+<div id="chatPage">
   <div class="sidebar">
     <h3>Model AI</h3>
-    <button onclick="logout()">Logout</button>
+    <button class="logout" onclick="logout()">Logout</button>
   </div>
 
   <div class="main">
-    <div class="msgs" id="msgs"></div>
+    <div id="messages" class="messages"></div>
 
-    <div class="inputBox">
-      <input id="input" placeholder="Ask anything..." />
+    <div class="input-box">
+      <input id="msgInput" placeholder="Ask anything..." />
       <button class="send" onclick="sendMsg()">Send</button>
     </div>
   </div>
 </div>
 
-<script type="module" src="chat.js"></script>
+<!-- FIREBASE + CHAT SCRIPT -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getAuth,
+    GoogleAuthProvider,
+    signInWithPopup,
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
+    onAuthStateChanged,
+    signOut
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDUcWSbU-ELP7Erx9yGPbq65clsn2ME8pk",
+    authDomain: "model-ai-727b1.firebaseapp.com",
+    projectId: "model-ai-727b1",
+    storageBucket: "model-ai-727b1.firebasestorage.app",
+    messagingSenderId: "970799402645",
+    appId: "1:970799402645:web:4e2a93dbacbfd6ee97d59c"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
+
+  const loginPage = document.getElementById("loginPage");
+  const chatPage = document.getElementById("chatPage");
+  const messages = document.getElementById("messages");
+
+  // AUTH STATE
+  onAuthStateChanged(auth, user => {
+    if (user) {
+      loginPage.style.display = "none";
+      chatPage.style.display = "block";
+    } else {
+      loginPage.style.display = "flex";
+      chatPage.style.display = "none";
+    }
+  });
+
+  // GOOGLE LOGIN
+  window.googleLogin = async () => {
+    try {
+      await signInWithPopup(auth, provider);
+    } catch (e) {
+      alert(e.message);
+    }
+  };
+
+  // EMAIL LOGIN
+  window.emailLogin = async () => {
+    const email = prompt("Enter email:");
+    const pass = prompt("Enter password:");
+    try {
+      await signInWithEmailAndPassword(auth, email, pass);
+    } catch (e) {
+      alert(e.message);
+    }
+  };
+
+  // SIGNUP
+  window.signup = async () => {
+    const email = prompt("Enter email:");
+    const pass = prompt("Create password:");
+    try {
+      await createUserWithEmailAndPassword(auth, email, pass);
+    } catch (e) {
+      alert(e.message);
+    }
+  };
+
+  // LOGOUT
+  window.logout = async () => {
+    await signOut(auth);
+  };
+
+  // CHAT SEND
+  window.sendMsg = async () => {
+    const input = document.getElementById("msgInput");
+    const text = input.value.trim();
+    if (!text) return;
+
+    addMsg(text, "user");
+    input.value = "";
+
+    const res = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: text })
+    });
+
+    const data = await res.json();
+    addMsg(data.reply || "No reply", "bot");
+  };
+
+  function addMsg(text, type) {
+    const div = document.createElement("div");
+    div.className = "msg " + type;
+    div.innerText = text;
+    messages.appendChild(div);
+    messages.scrollTop = messages.scrollHeight;
+  }
+</script>
+
 </body>
 </html>
