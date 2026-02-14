@@ -7,30 +7,35 @@ async function ask(){
   saveHistory(q);
   document.getElementById("q").value = "";
 
-  // ✅ MULTI IMAGE GENERATION
-  if(q.toLowerCase().startsWith("image of")){
-    const prompt = q.replace("image of","").trim();
+ // MULTI IMAGE GENERATION FIXED
+if(q.toLowerCase().startsWith("image of")){
+  const prompt = q.replace("image of","").trim();
 
-    const wrap = document.createElement("div");
-    wrap.className = "msg bot";
+  const wrap = document.createElement("div");
+  wrap.className = "msg bot";
 
-    const bubble = document.createElement("div");
-    bubble.className = "bubble";
-    bubble.innerText = "Generated images:";
-    wrap.appendChild(bubble);
+  const bubble = document.createElement("div");
+  bubble.className = "bubble";
+  bubble.innerText = "Generated images:";
+  wrap.appendChild(bubble);
 
-    // create 4 images
-    for(let i=0;i<4;i++){
-      const img = document.createElement("img");
-      img.src = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?seed=${Math.random()}`;
-      img.className = "ai-image";
-      wrap.appendChild(img);
-    }
+  // create 4 images with delay-free stable URLs
+  for(let i=0;i<4;i++){
+    const img = document.createElement("img");
+    img.src = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=512&height=512&seed=${i+1}`;
+    img.className = "ai-image";
 
-    document.getElementById("chat").appendChild(wrap);
-    document.getElementById("chat").scrollTop = chat.scrollHeight;
-    return;
+    // if image fails → hide broken icon
+    img.onerror = () => img.style.display = "none";
+
+    wrap.appendChild(img);
   }
+
+  chat.appendChild(wrap);
+  chat.scrollTop = chat.scrollHeight;
+  return;
+}
+
 
   // ✅ TEXT AI
   addMessage("Thinking...", "bot");
