@@ -11,18 +11,24 @@ export default async function handler(req, res) {
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        "HTTP-Referer": "https://modelai.online",
+        "X-Title": "Model AI"
       },
       body: JSON.stringify({
-        model: "openai/gpt-3.5-turbo",
+        model: "openai/gpt-4o-mini",   // ✅ WORKING FREE MODEL
         messages: [{ role: "user", content: message }],
       }),
     });
 
     const data = await response.json();
 
-    res.status(200).json({
-      reply: data?.choices?.[0]?.message?.content || "AI reply not available",
-    });
+    const reply =
+      data?.choices?.[0]?.message?.content ||
+      data?.choices?.[0]?.text ||
+      "AI reply not available";
+
+    res.status(200).json({ reply });
+
   } catch (err) {
     res.status(500).json({ error: "Server error" });
   }
