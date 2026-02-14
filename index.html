@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Model AI Chat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body style="font-family:Arial;background:#111;color:#fff;text-align:center;padding:40px">
+
+<h1>Model AI Chat</h1>
+
+<input id="q" placeholder="Ask anything..." style="width:60%;padding:10px"/>
+<button onclick="ask()">Send</button>
+
+<p id="a"></p>
+
+<script>
+async function ask(){
+  const q = document.getElementById("q").value;
+  document.getElementById("a").innerText = "Thinking...";
+
+  const res = await fetch("/api/chat",{
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({ message:q })
+  });
+
+  const data = await res.json();
+  document.getElementById("a").innerText = data.reply || "Error";
+}
+</script>
+
+</body>
+</html>
