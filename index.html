@@ -1,53 +1,239 @@
-<script>
-async function ask(){
-  const q = document.getElementById("q").value;
-  if(!q) return;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Model AI</title>
 
-  addMessage(q, "user");
-  saveHistory(q);
-  document.getElementById("q").value = "";
+  <style>
+    * { box-sizing: border-box; font-family: Inter, system-ui, Arial, sans-serif; }
 
- // MULTI IMAGE GENERATION FIXED
-if(q.toLowerCase().startsWith("image of")){
-  const prompt = q.replace("image of","").trim();
+    body {
+      margin: 0;
+      background: #f7f7f8;
+      color: #111827;
+      display: flex;
+      height: 100vh;
+    }
 
-  const wrap = document.createElement("div");
-  wrap.className = "msg bot";
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: #ffffff;
+      border-right: 1px solid #e5e7eb;
+      display: flex;
+      flex-direction: column;
+      padding: 12px;
+    }
 
-  const bubble = document.createElement("div");
-  bubble.className = "bubble";
-  bubble.innerText = "Generated images:";
-  wrap.appendChild(bubble);
+    .new-chat {
+      background: #10a37f;
+      border: none;
+      padding: 10px;
+      border-radius: 10px;
+      color: white;
+      cursor: pointer;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
 
-  // create 4 images with delay-free stable URLs
-  for(let i=0;i<4;i++){
-    const img = document.createElement("img");
-    img.src = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=512&height=512&seed=${i+1}`;
-    img.className = "ai-image";
+    .history { flex: 1; overflow-y: auto; font-size: 14px; }
+    .history div { padding: 8px; border-radius: 8px; cursor: pointer; }
+    .history div:hover { background: #f3f4f6; }
 
-    // if image fails → hide broken icon
-    img.onerror = () => img.style.display = "none";
+    /* Main */
+    .main { flex: 1; display: flex; flex-direction: column; }
 
-    wrap.appendChild(img);
-  }
+    /* Top bar */
+    .topbar {
+      padding: 12px 20px;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #ffffff;
+    }
 
-  chat.appendChild(wrap);
-  chat.scrollTop = chat.scrollHeight;
-  return;
-}
+    .title { font-weight: 600; font-size: 16px; }
 
+    /* Chat */
+    #chat {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
 
-  // ✅ TEXT AI
-  addMessage("Thinking...", "bot");
+    .msg { max-width: 720px; }
+    .user { align-self: flex-end; }
+    .bot { align-self: flex-start; }
 
-  const res = await fetch("/api/chat",{
-    method:"POST",
-    headers:{ "Content-Type":"application/json" },
-    body: JSON.stringify({ message:q })
-  });
+    .bubble {
+      padding: 12px 16px;
+      border-radius: 14px;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
 
-  const data = await res.json();
-  chat.lastChild.remove();
-  addMessage(data.reply || "Error", "bot");
-}
-</script>
+    .user .bubble { background: #10a37f; color: white; border: none; }
+
+    /* Floating input like ChatGPT */
+    .input-wrapper {
+      padding: 16px;
+      background: transparent;
+      display: flex;
+      justify-content: center;
+    }
+
+    .input-area {
+      width: 100%;
+      max-width: 900px;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      padding: 10px 12px;
+      gap: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .upload-btn {
+      background: #f3f4f6;
+      border: none;
+      padding: 8px 10px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 15px;
+      background: transparent;
+    }
+
+    button.send {
+      border: none;
+      background: #10a37f;
+      color: white;
+      padding: 10px 16px;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    img.ai-image {
+      max-width: 180px;
+      border-radius: 10px;
+      margin-top: 10px;
+      margin-right: 8px;
+      border: 1px solid #e5e7eb;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="sidebar">
+    <button class="new-chat" onclick="newChat()">+ New chat</button>
+    <div class="history" id="history"></div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="title">Model AI</div>
+    </div>
+
+    <div id="chat"></div>
+
+    <!-- Floating centered input -->
+    <div class="input-wrapper">
+      <div class="input-area">
+        <button class="upload-btn" onclick="alert('Image upload coming soon')">+</button>
+        <input id="q" type="text" placeholder="Ask anything…  (try: image of lion)" />
+        <button class="send" onclick="ask()">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const chat = document.getElementById("chat");
+    const historyDiv = document.getElementById("history");
+
+    function addMessage(text, type, imageUrls = []) {
+      const wrap = document.createElement("div");
+      wrap.className = "msg " + type;
+
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      bubble.innerText = text;
+      wrap.appendChild(bubble);
+
+      imageUrls.forEach(url => {
+        const img = document.createElement("img");
+        img.src = url;
+        img.className = "ai-image";
+        img.onerror = () => img.remove();
+        wrap.appendChild(img);
+      });
+
+      chat.appendChild(wrap);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function saveHistory(q) {
+      const item = document.createElement("div");
+      item.innerText = q;
+      item.onclick = () => { document.getElementById("q").value = q; };
+      historyDiv.appendChild(item);
+    }
+
+    function newChat() { chat.innerHTML = ""; }
+
+    async function ask() {
+      const q = document.getElementById("q").value.trim();
+      if (!q) return;
+
+      addMessage(q, "user");
+      saveHistory(q);
+      document.getElementById("q").value = "";
+
+      // MULTI IMAGE GENERATION (8 images)
+      if (q.toLowerCase().startsWith("image of")) {
+        const prompt = q.replace("image of", "").trim();
+
+        const images = [];
+        for (let i = 1; i <= 8; i++) {
+          images.push(`https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=512&height=512&seed=${i}`);
+        }
+
+        addMessage("Generated images:", "bot", images);
+        return;
+      }
+
+      // TEXT AI
+      addMessage("Thinking…", "bot");
+
+      try {
+        const res = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: q })
+        });
+
+        const data = await res.json();
+        chat.lastChild.remove();
+        addMessage(data.reply || "Error", "bot");
+      } catch {
+        chat.lastChild.remove();
+        addMessage("Connection error", "bot");
+      }
+    }
+  </script>
+</body>
+</html>
