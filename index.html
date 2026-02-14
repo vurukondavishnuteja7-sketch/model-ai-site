@@ -6,43 +6,72 @@
 <title>Model AI</title>
 
 <style>
-body{margin:0;font-family:Arial;background:#f7f7f8;display:flex;height:100vh}
-.sidebar{width:250px;background:#fff;border-right:1px solid #ddd;padding:10px}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial;background:#f7f7f8;height:100vh;display:flex}
+
+/* SIDEBAR */
+.sidebar{width:260px;background:#111;color:#fff;display:flex;flex-direction:column;padding:12px}
+.logo{font-size:18px;font-weight:bold;margin-bottom:12px}
+.new-chat{background:#10a37f;border:none;color:#fff;padding:10px;border-radius:10px;cursor:pointer;margin-bottom:10px}
+.history{flex:1;overflow:auto;font-size:14px}
+.history div{padding:8px;border-radius:8px;cursor:pointer}
+.history div:hover{background:#222}
+
+/* MAIN */
 .main{flex:1;display:flex;flex-direction:column}
-.chat{flex:1;overflow:auto;padding:20px}
-.input{display:flex;border-top:1px solid #ddd;padding:10px}
-input{flex:1;padding:10px}
-button{padding:10px 15px;margin-left:5px}
-.msg{margin:10px 0}
-.user{text-align:right}
-img{max-width:200px;border-radius:10px;margin-top:5px}
+.topbar{padding:12px 16px;border-bottom:1px solid #ddd;display:flex;justify-content:space-between;align-items:center;background:#fff}
+.chat{flex:1;overflow:auto;padding:20px;display:flex;flex-direction:column;gap:12px}
+
+.msg{max-width:700px;padding:12px 16px;border-radius:16px}
+.user{align-self:flex-end;background:#10a37f;color:#fff}
+.bot{background:#fff;border:1px solid #ddd}
+
+/* INPUT */
+.input-area{border-top:1px solid #ddd;padding:10px;background:#fff;display:flex;gap:8px}
+.input-area input{flex:1;padding:12px;border-radius:10px;border:1px solid #ccc}
+.send{background:#10a37f;border:none;color:#fff;padding:10px 18px;border-radius:10px;cursor:pointer}
+
+/* LOGIN */
 .login{position:fixed;inset:0;background:#0008;display:flex;align-items:center;justify-content:center}
-.login-box{background:#fff;padding:20px;border-radius:10px;text-align:center}
+.login-box{background:#fff;padding:20px;border-radius:12px;text-align:center;width:260px}
+.login-box button{margin:6px 0;padding:10px;width:100%}
+
+/* DARK MODE */
+.dark body{background:#0b0b0c}
+.dark .topbar{background:#111;color:#fff;border-color:#222}
+.dark .bot{background:#1a1a1b;border-color:#333;color:#fff}
+.dark .input-area{background:#111;border-color:#222}
+.dark .input-area input{background:#1a1a1b;color:#fff;border-color:#333}
 </style>
 </head>
 
 <body>
 
 <div class="sidebar">
-<h3>Model AI</h3>
+<div class="logo">Model AI</div>
+<button class="new-chat" onclick="newChat()">+ New Chat</button>
+<div id="history" class="history"></div>
+<button onclick="toggleTheme()">🌙 Toggle Theme</button>
 <button onclick="logout()">Logout</button>
 </div>
 
 <div class="main">
+<div class="topbar">AI Assistant</div>
+
 <div id="chat" class="chat"></div>
 
-<div class="input">
-<input id="q" placeholder="Ask anything or type: image cat"/>
-<button onclick="ask()">Send</button>
+<div class="input-area">
+<input id="q" placeholder="Ask anything or type: image cat" />
+<button class="send" onclick="ask()">Send</button>
 </div>
 </div>
 
-<!-- LOGIN SCREEN -->
+<!-- LOGIN -->
 <div id="login" class="login" style="display:none">
 <div class="login-box">
 <h2>Login</h2>
-<button onclick="googleLogin()">Google Login</button><br><br>
-<button onclick="emailLogin()">Email Login</button><br><br>
+<button onclick="googleLogin()">Google Login</button>
+<button onclick="emailLogin()">Email Login</button>
 <button onclick="emailSignup()">Sign Up</button>
 </div>
 </div>
@@ -65,32 +94,29 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 
-/* GOOGLE LOGIN */
+/* LOGIN */
 async function googleLogin(){
   const provider=new firebase.auth.GoogleAuthProvider();
   await auth.signInWithPopup(provider);
 }
 
-/* EMAIL LOGIN */
 async function emailLogin(){
   const email=prompt("Email:");
   const pass=prompt("Password:");
   await auth.signInWithEmailAndPassword(email,pass);
 }
 
-/* SIGNUP */
 async function emailSignup(){
   const email=prompt("Create Email:");
   const pass=prompt("Create Password:");
   await auth.createUserWithEmailAndPassword(email,pass);
 }
 
-/* LOGOUT */
 async function logout(){
   await auth.signOut();
 }
 
-/* AUTO LOGIN CHECK */
+/* LOGIN STATE */
 auth.onAuthStateChanged(user=>{
   document.getElementById("login").style.display = user ? "none" : "flex";
 });
@@ -112,17 +138,18 @@ async function ask(){
   if(!msg) return;
 
   add(msg,"user");
+  saveHistory(msg);
   q.value="";
 
-  /* IMAGE MODE */
   if(msg.toLowerCase().startsWith("image")){
     const img=document.createElement("img");
     img.src=`https://image.pollinations.ai/prompt/${encodeURIComponent(msg)}`;
+    img.style.maxWidth="200px";
     chat.appendChild(img);
     return;
   }
 
-  add("Thinking...");
+  add("Thinking...","bot");
 
   const res=await fetch("/api/chat",{
     method:"POST",
@@ -132,7 +159,32 @@ async function ask(){
 
   const data=await res.json();
   chat.lastChild.remove();
-  add(data.reply || "Error");
+  add(data.reply||"Error","bot");
+}
+
+/* HISTORY */
+function saveHistory(t){
+  const arr=JSON.parse(localStorage.getItem("h")||"[]");
+  arr.unshift(t);
+  localStorage.setItem("h",JSON.stringify(arr.slice(0,20)));
+  renderHistory();
+}
+
+function renderHistory(){
+  const h=document.getElementById("history");
+  h.innerHTML="";
+  (JSON.parse(localStorage.getItem("h")||"[]")).forEach(t=>{
+    const d=document.createElement("div");
+    d.textContent=t;
+    d.onclick=()=>document.getElementById("q").value=t;
+    h.appendChild(d);
+  });
+}
+renderHistory();
+
+/* THEME */
+function toggleTheme(){
+  document.documentElement.classList.toggle("dark");
 }
 </script>
 
