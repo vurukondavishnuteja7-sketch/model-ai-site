@@ -1,107 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Model AI</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Model AI</title>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: white;
-    }
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
 
-    .center {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
+body{background:#0b1020;color:#fff}
 
-    .login-box {
-      background: #1e293b;
-      padding: 30px;
-      border-radius: 12px;
-      text-align: center;
-      width: 260px;
-    }
+/* LOGIN */
+#loginPage{
+display:flex;justify-content:center;align-items:center;
+height:100vh;background:linear-gradient(135deg,#0f172a,#020617)
+}
 
-    button {
-      padding: 10px;
-      margin: 8px 0;
-      width: 100%;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-    }
+.login-box{
+background:#111827;padding:35px;border-radius:14px;
+width:280px;text-align:center;box-shadow:0 0 20px #000
+}
 
-    .google { background: #ef4444; color: white; }
-    .email { background: #3b82f6; color: white; }
-    .signup { background: #22c55e; color: white; }
-    .logout { background: #ef4444; }
+.login-box h2{margin-bottom:15px}
 
-    /* CHAT UI */
-    #chatPage { display: none; }
+.login-box button{
+width:100%;padding:10px;margin-top:10px;border:none;
+border-radius:8px;font-weight:bold;cursor:pointer
+}
 
-    .sidebar {
-      width: 220px;
-      background: #020617;
-      height: 100vh;
-      padding: 15px;
-      position: fixed;
-    }
+.google{background:#ef4444;color:#fff}
+.email{background:#3b82f6;color:#fff}
+.signup{background:#22c55e;color:#fff}
 
-    .main {
-      margin-left: 240px;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-    }
+/* CHAT LAYOUT */
+#chatPage{display:none;height:100vh}
 
-    .messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px;
-    }
+.sidebar{
+position:fixed;width:260px;height:100%;
+background:#020617;padding:15px;border-right:1px solid #111
+}
 
-    .msg {
-      padding: 10px 14px;
-      margin: 10px 0;
-      border-radius: 10px;
-      max-width: 70%;
-    }
+.sidebar h2{margin-bottom:15px}
 
-    .user { background: #22c55e; margin-left: auto; }
-    .bot { background: #334155; }
+.newchat{
+background:#16a34a;color:#fff;border:none;
+padding:10px;width:100%;border-radius:8px;margin-bottom:10px;
+cursor:pointer
+}
 
-    .input-box {
-      display: flex;
-      padding: 10px;
-      background: #020617;
-    }
+.logout{
+background:#ef4444;border:none;padding:8px;
+border-radius:6px;color:#fff;width:100%;cursor:pointer
+}
 
-    input {
-      flex: 1;
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
-    }
+.main{
+margin-left:260px;height:100vh;
+display:flex;flex-direction:column
+}
 
-    .send {
-      background: #22c55e;
-      color: white;
-      margin-left: 10px;
-      padding: 10px 16px;
-    }
-  </style>
+/* HEADER */
+.header{
+padding:15px;border-bottom:1px solid #111;
+font-weight:bold;background:#020617
+}
+
+/* MESSAGES */
+.messages{
+flex:1;overflow-y:auto;padding:20px;
+display:flex;flex-direction:column;gap:12px
+}
+
+.msg{
+padding:12px 16px;border-radius:12px;
+max-width:70%;line-height:1.4;font-size:14px
+}
+
+.user{background:#16a34a;margin-left:auto}
+.bot{background:#1f2937}
+
+/* INPUT */
+.input-box{
+display:flex;padding:12px;border-top:1px solid #111;
+background:#020617
+}
+
+.input-box input{
+flex:1;padding:12px;border-radius:10px;border:none;
+background:#111827;color:#fff
+}
+
+.send{
+background:#16a34a;color:#fff;border:none;
+padding:12px 18px;margin-left:10px;border-radius:10px;
+cursor:pointer;font-weight:bold
+}
+</style>
 </head>
+
 <body>
 
-<!-- LOGIN PAGE -->
-<div id="loginPage" class="center">
+<!-- LOGIN -->
+<div id="loginPage">
   <div class="login-box">
     <h2>Login to Model AI</h2>
     <button class="google" onclick="googleLogin()">Google Login</button>
@@ -110,126 +109,109 @@
   </div>
 </div>
 
-<!-- CHAT PAGE -->
+<!-- CHAT -->
 <div id="chatPage">
+
   <div class="sidebar">
-    <h3>Model AI</h3>
+    <h2>Model AI</h2>
+    <button class="newchat" onclick="clearChat()">+ New Chat</button>
     <button class="logout" onclick="logout()">Logout</button>
   </div>
 
   <div class="main">
+    <div class="header">AI Assistant</div>
+
     <div id="messages" class="messages"></div>
 
     <div class="input-box">
-      <input id="msgInput" placeholder="Ask anything..." />
+      <input id="msgInput" placeholder="Send a message...">
       <button class="send" onclick="sendMsg()">Send</button>
     </div>
   </div>
+
 </div>
 
-<!-- FIREBASE + CHAT SCRIPT -->
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import {
-    getAuth,
-    GoogleAuthProvider,
-    signInWithPopup,
-    signInWithEmailAndPassword,
-    createUserWithEmailAndPassword,
-    onAuthStateChanged,
-    signOut
-  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+getAuth, GoogleAuthProvider, signInWithPopup,
+signInWithEmailAndPassword, createUserWithEmailAndPassword,
+onAuthStateChanged, signOut
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyDUcWSbU-ELP7Erx9yGPbq65clsn2ME8pk",
-    authDomain: "model-ai-727b1.firebaseapp.com",
-    projectId: "model-ai-727b1",
-    storageBucket: "model-ai-727b1.firebasestorage.app",
-    messagingSenderId: "970799402645",
-    appId: "1:970799402645:web:4e2a93dbacbfd6ee97d59c"
-  };
+const firebaseConfig = {
+apiKey:"AIzaSyDUcWSbU-ELP7Erx9yGPbq65clsn2ME8pk",
+authDomain:"model-ai-727b1.firebaseapp.com",
+projectId:"model-ai-727b1",
+storageBucket:"model-ai-727b1.firebasestorage.app",
+messagingSenderId:"970799402645",
+appId:"1:970799402645:web:4e2a93dbacbfd6ee97d59c"
+};
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const provider = new GoogleAuthProvider();
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
 
-  const loginPage = document.getElementById("loginPage");
-  const chatPage = document.getElementById("chatPage");
-  const messages = document.getElementById("messages");
+const loginPage = document.getElementById("loginPage");
+const chatPage = document.getElementById("chatPage");
+const messages = document.getElementById("messages");
 
-  // AUTH STATE
-  onAuthStateChanged(auth, user => {
-    if (user) {
-      loginPage.style.display = "none";
-      chatPage.style.display = "block";
-    } else {
-      loginPage.style.display = "flex";
-      chatPage.style.display = "none";
-    }
-  });
+/* AUTH STATE */
+onAuthStateChanged(auth,user=>{
+if(user){
+loginPage.style.display="none";
+chatPage.style.display="block";
+}else{
+loginPage.style.display="flex";
+chatPage.style.display="none";
+}
+});
 
-  // GOOGLE LOGIN
-  window.googleLogin = async () => {
-    try {
-      await signInWithPopup(auth, provider);
-    } catch (e) {
-      alert(e.message);
-    }
-  };
+/* LOGIN METHODS */
+window.googleLogin=()=>signInWithPopup(auth,provider).catch(e=>alert(e.message));
 
-  // EMAIL LOGIN
-  window.emailLogin = async () => {
-    const email = prompt("Enter email:");
-    const pass = prompt("Enter password:");
-    try {
-      await signInWithEmailAndPassword(auth, email, pass);
-    } catch (e) {
-      alert(e.message);
-    }
-  };
+window.emailLogin=async()=>{
+const email=prompt("Email:");
+const pass=prompt("Password:");
+await signInWithEmailAndPassword(auth,email,pass).catch(e=>alert(e.message));
+};
 
-  // SIGNUP
-  window.signup = async () => {
-    const email = prompt("Enter email:");
-    const pass = prompt("Create password:");
-    try {
-      await createUserWithEmailAndPassword(auth, email, pass);
-    } catch (e) {
-      alert(e.message);
-    }
-  };
+window.signup=async()=>{
+const email=prompt("Email:");
+const pass=prompt("Password:");
+await createUserWithEmailAndPassword(auth,email,pass).catch(e=>alert(e.message));
+};
 
-  // LOGOUT
-  window.logout = async () => {
-    await signOut(auth);
-  };
+window.logout=()=>signOut(auth);
 
-  // CHAT SEND
-  window.sendMsg = async () => {
-    const input = document.getElementById("msgInput");
-    const text = input.value.trim();
-    if (!text) return;
+/* CHAT */
+window.sendMsg=async()=>{
+const input=document.getElementById("msgInput");
+const text=input.value.trim();
+if(!text)return;
 
-    addMsg(text, "user");
-    input.value = "";
+addMsg(text,"user");
+input.value="";
 
-    const res = await fetch("/api/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: text })
-    });
+const res=await fetch("/api/chat",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({message:text})
+});
 
-    const data = await res.json();
-    addMsg(data.reply || "No reply", "bot");
-  };
+const data=await res.json();
+addMsg(data.reply || "No reply","bot");
+};
 
-  function addMsg(text, type) {
-    const div = document.createElement("div");
-    div.className = "msg " + type;
-    div.innerText = text;
-    messages.appendChild(div);
-    messages.scrollTop = messages.scrollHeight;
-  }
+function addMsg(text,type){
+const div=document.createElement("div");
+div.className="msg "+type;
+div.innerText=text;
+messages.appendChild(div);
+messages.scrollTop=messages.scrollHeight;
+}
+
+window.clearChat=()=>messages.innerHTML="";
 </script>
 
 </body>
