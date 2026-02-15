@@ -2,69 +2,72 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Model AI</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Model AI Pro</title>
 
 <style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+
 body{
-  margin:0;
-  font-family:Arial, sans-serif;
-  background:linear-gradient(135deg,#0f172a,#020617);
+  display:flex;
+  height:100vh;
+  background:#0b1220;
   color:white;
 }
 
+/* Sidebar */
 .sidebar{
-  width:220px;
-  height:100vh;
+  width:240px;
   background:#020617;
-  position:fixed;
   padding:20px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
 }
 
 .btn{
-  width:100%;
   padding:12px;
   border:none;
   border-radius:10px;
-  margin-top:10px;
-  font-weight:bold;
   cursor:pointer;
+  font-weight:bold;
 }
 
-.new{background:#22c55e;color:white;}
-.logout{background:#ef4444;color:white;}
+.new{background:#22c55e;color:white}
+.logout{background:#ef4444;color:white}
 
+/* Chat area */
 .main{
-  margin-left:240px;
+  flex:1;
   display:flex;
   flex-direction:column;
-  height:100vh;
 }
 
 .header{
   padding:15px;
-  font-size:20px;
   border-bottom:1px solid #1e293b;
+  font-size:18px;
 }
 
 .chat{
   flex:1;
-  overflow:auto;
   padding:20px;
+  overflow:auto;
 }
 
 .msg{
   max-width:70%;
   padding:12px;
-  border-radius:15px;
+  border-radius:12px;
   margin:10px 0;
 }
 
-.user{background:#22c55e;margin-left:auto;}
-.ai{background:#1e293b;}
+.user{background:#22c55e;margin-left:auto}
+.bot{background:#1e293b}
 
-.input{
+/* Input */
+.inputBox{
   display:flex;
   padding:15px;
   border-top:1px solid #1e293b;
@@ -75,42 +78,41 @@ input{
   padding:12px;
   border-radius:10px;
   border:none;
-  background:#020617;
-  color:white;
+  outline:none;
 }
 
 .send{
-  background:#22c55e;
-  border:none;
   margin-left:10px;
-  padding:12px 20px;
-  border-radius:10px;
+  background:#22c55e;
   color:white;
-  font-weight:bold;
 }
 </style>
 </head>
 
 <body>
 
+<!-- Sidebar -->
 <div class="sidebar">
   <button class="btn new" onclick="newChat()">+ New Chat</button>
-  <button class="btn logout" onclick="logout()">Logout</button>
+  <button class="btn logout">Logout</button>
 </div>
 
+<!-- Main -->
 <div class="main">
+
   <div class="header">Model AI Assistant</div>
 
-  <div class="chat" id="chat"></div>
+  <div id="chat" class="chat"></div>
 
-  <div class="input">
-    <input id="msg" placeholder="Send a message..." />
-    <button class="send" onclick="send()">Send</button>
+  <div class="inputBox">
+    <input id="msg" placeholder="Send a message...">
+    <button class="btn send" onclick="sendMsg()">Send</button>
   </div>
+
 </div>
 
 <script>
-async function send(){
+async function sendMsg(){
   const input=document.getElementById("msg");
   const text=input.value.trim();
   if(!text) return;
@@ -118,40 +120,25 @@ async function send(){
   addMsg(text,"user");
   input.value="";
 
-  addMsg("Typing...","ai");
+  const res=await fetch("/api/chat",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({message:text})
+  });
 
-  try{
-    const res=await fetch("/api/chat",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({message:text})
-    });
-
-    const data=await res.json();
-    updateLast(data.reply || "No reply");
-  }catch{
-    updateLast("AI error");
-  }
+  const data=await res.json();
+  addMsg(data.reply || "AI error","bot");
 }
 
-function addMsg(text,type){
+function addMsg(t,type){
   const div=document.createElement("div");
   div.className="msg "+type;
-  div.innerText=text;
+  div.innerText=t;
   document.getElementById("chat").appendChild(div);
-}
-
-function updateLast(text){
-  const msgs=document.querySelectorAll(".ai");
-  msgs[msgs.length-1].innerText=text;
 }
 
 function newChat(){
   document.getElementById("chat").innerHTML="";
-}
-
-function logout(){
-  alert("Logout success");
 }
 </script>
 
