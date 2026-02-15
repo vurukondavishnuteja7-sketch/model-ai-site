@@ -1,40 +1,125 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Model AI</title>
 
 <style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:"Segoe UI",sans-serif;
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+body{background:#0b1020;color:#fff;height:100vh;display:flex}
+
+/* Sidebar */
+.sidebar{
+width:250px;background:#020617;padding:20px;display:flex;flex-direction:column;gap:10px
+}
+.btn{
+padding:12px;border:none;border-radius:10px;color:#fff;cursor:pointer;font-weight:bold
+}
+.new{background:#10b981}
+.logout{background:#ef4444}
+
+/* Chat area */
+.chat-wrap{flex:1;display:flex;flex-direction:column}
+.header{padding:15px 20px;background:#020617;border-bottom:1px solid #111}
+.messages{flex:1;padding:20px;overflow:auto;display:flex;flex-direction:column;gap:15px}
+.msg{max-width:70%;padding:12px 16px;border-radius:14px}
+.user{background:#10b981;align-self:flex-end}
+.ai{background:#1e293b}
+
+/* Input */
+.input-box{
+display:flex;padding:15px;background:#020617;border-top:1px solid #111
+}
+input{
+flex:1;padding:12px;border-radius:12px;border:none;outline:none;background:#0f172a;color:#fff
+}
+.send{
+margin-left:10px;background:#10b981;border:none;padding:12px 18px;border-radius:12px;color:#fff;font-weight:bold;cursor:pointer
 }
 
-/* ===== FULL AI BACKGROUND ===== */
-body{
-  height:100vh;
-  display:flex;
-  background:url("ai-bg.jpg") center/cover no-repeat;
-  color:white;
+/* Login modal */
+.modal{
+position:fixed;inset:0;background:#0008;display:flex;align-items:center;justify-content:center
+}
+.card{
+background:#111827;padding:30px;border-radius:16px;text-align:center
+}
+.card button{margin-top:10px;width:200px}
+</style>
+</head>
+
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+<button class="btn new" onclick="newChat()">+ New Chat</button>
+<button class="btn logout" onclick="logout()">Logout</button>
+</div>
+
+<!-- Chat -->
+<div class="chat-wrap">
+<div class="header">Model AI Assistant</div>
+
+<div id="messages" class="messages"></div>
+
+<div class="input-box">
+<input id="input" placeholder="Send a message..." />
+<button class="send" onclick="send()">Send</button>
+</div>
+</div>
+
+<!-- Login -->
+<div id="loginModal" class="modal">
+<div class="card">
+<h2>Login to Model AI</h2>
+<button class="btn new" onclick="googleLogin()">Google Login</button>
+<button class="btn logout" onclick="emailLogin()">Email Login</button>
+</div>
+</div>
+
+<script>
+let loggedIn=false;
+
+function show(msg,type){
+const div=document.createElement("div");
+div.className="msg "+type;
+div.textContent=msg;
+messages.appendChild(div);
+messages.scrollTop=messages.scrollHeight;
 }
 
-/* ===== DARK OVERLAY ===== */
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,20,0.75);
+async function send(){
+if(!loggedIn) return alert("Login first");
+
+const text=input.value.trim();
+if(!text) return;
+
+show(text,"user");
+input.value="";
+
+show("Thinking...","ai");
+
+const res=await fetch("/api/chat",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({message:text})
+});
+
+const data=await res.json();
+messages.lastChild.textContent=data.reply || "AI error";
 }
 
-/* ===== MAIN LAYOUT ===== */
-.app{
-  display:flex;
-  width:100%;
-  position:relative;
-  z-index:2;
+function newChat(){messages.innerHTML=""}
+function logout(){loggedIn=false;loginModal.style.display="flex"}
+
+/* Fake login for now (Firebase ready later) */
+function googleLogin(){loggedIn=true;loginModal.style.display="none"}
+function emailLogin(){loggedIn=true;loginModal.style.display="none"}
+</script>
+
+</body>
+</html>  z-index:2;
 }
 
 /* ===== SIDEBAR ===== */
