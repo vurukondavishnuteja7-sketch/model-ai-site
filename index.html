@@ -1,24 +1,28 @@
-<!-- update new deploy -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Model AI Pro</title>
+<title>Model AI Assistant</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Segoe UI, sans-serif;
+}
 
 body{
-  display:flex;
   height:100vh;
-  background:#0b1220;
+  display:flex;
+  background:linear-gradient(135deg,#0f172a,#020617);
   color:white;
 }
 
 /* Sidebar */
 .sidebar{
-  width:240px;
+  width:230px;
   background:#020617;
   padding:20px;
   display:flex;
@@ -27,64 +31,89 @@ body{
 }
 
 .btn{
-  padding:12px;
+  padding:14px;
   border:none;
-  border-radius:10px;
+  border-radius:12px;
+  font-size:15px;
   cursor:pointer;
-  font-weight:bold;
+  font-weight:600;
 }
 
-.new{background:#22c55e;color:white}
-.logout{background:#ef4444;color:white}
+.newchat{background:#22c55e;color:white;}
+.logout{background:#ef4444;color:white;}
 
 /* Chat area */
-.main{
+.chatbox{
   flex:1;
   display:flex;
   flex-direction:column;
 }
 
 .header{
-  padding:15px;
+  padding:18px;
   border-bottom:1px solid #1e293b;
-  font-size:18px;
+  font-size:20px;
+  font-weight:bold;
 }
 
-.chat{
+/* Messages */
+.messages{
   flex:1;
-  padding:20px;
   overflow:auto;
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
 }
 
 .msg{
   max-width:70%;
-  padding:12px;
-  border-radius:12px;
-  margin:10px 0;
+  padding:14px 18px;
+  border-radius:16px;
+  font-size:15px;
+  line-height:1.4;
 }
 
-.user{background:#22c55e;margin-left:auto}
-.bot{background:#1e293b}
+.user{
+  background:#22c55e;
+  align-self:flex-end;
+}
+
+.bot{
+  background:#1e293b;
+  align-self:flex-start;
+}
 
 /* Input */
-.inputBox{
-  display:flex;
-  padding:15px;
+.inputbox{
+  padding:14px;
   border-top:1px solid #1e293b;
+  display:flex;
+  gap:10px;
 }
 
-input{
+.inputbox input{
   flex:1;
-  padding:12px;
-  border-radius:10px;
+  padding:14px;
+  border-radius:12px;
   border:none;
   outline:none;
+  font-size:15px;
 }
 
 .send{
-  margin-left:10px;
   background:#22c55e;
   color:white;
+  border:none;
+  padding:14px 20px;
+  border-radius:12px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+/* Mobile */
+@media(max-width:700px){
+  .sidebar{display:none;}
 }
 </style>
 </head>
@@ -93,52 +122,60 @@ input{
 
 <!-- Sidebar -->
 <div class="sidebar">
-  <button class="btn new" onclick="newChat()">+ New Chat</button>
+  <button class="btn newchat" onclick="newChat()">+ New Chat</button>
   <button class="btn logout">Logout</button>
 </div>
 
-<!-- Main -->
-<div class="main">
-
+<!-- Chat -->
+<div class="chatbox">
   <div class="header">Model AI Assistant</div>
 
-  <div id="chat" class="chat"></div>
+  <div class="messages" id="messages"></div>
 
-  <div class="inputBox">
-    <input id="msg" placeholder="Send a message...">
-    <button class="btn send" onclick="sendMsg()">Send</button>
+  <div class="inputbox">
+    <input id="input" placeholder="Send a message...">
+    <button class="send" onclick="sendMsg()">Send</button>
   </div>
-
 </div>
 
 <script>
 async function sendMsg(){
-  const input=document.getElementById("msg");
-  const text=input.value.trim();
+  const input = document.getElementById("input");
+  const text = input.value.trim();
   if(!text) return;
 
   addMsg(text,"user");
   input.value="";
 
-  const res=await fetch("/api/chat",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({message:text})
-  });
+  addMsg("Typing...","bot");
 
-  const data=await res.json();
-  addMsg(data.reply || "AI error","bot");
+  try{
+    const res = await fetch("/api/chat",{
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body:JSON.stringify({message:text})
+    });
+
+    const data = await res.json();
+
+    document.querySelector(".messages .bot:last-child").remove();
+    addMsg(data.reply || "AI error","bot");
+
+  }catch(e){
+    document.querySelector(".messages .bot:last-child").remove();
+    addMsg("Server error","bot");
+  }
 }
 
-function addMsg(t,type){
+function addMsg(text,type){
   const div=document.createElement("div");
   div.className="msg "+type;
-  div.innerText=t;
-  document.getElementById("chat").appendChild(div);
+  div.textContent=text;
+  document.getElementById("messages").appendChild(div);
 }
 
 function newChat(){
-  document.getElementById("chat").innerHTML="";
+  document.getElementById("messages").innerHTML="";
 }
 </script>
 
