@@ -1,40 +1,129 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Model AI</title>
+import React, { useState } from "react";
 
-<style>
-body{
-  margin:0;
-  font-family:Arial, sans-serif;
-  background:linear-gradient(135deg,#0f172a,#020617);
-  color:white;
+export default function UltraProAIWebsite() { const [prompt, setPrompt] = useState(""); const [image, setImage] = useState(""); const [chatInput, setChatInput] = useState(""); const [chatHistory, setChatHistory] = useState([]); const [loadingImage, setLoadingImage] = useState(false); const [loadingChat, setLoadingChat] = useState(false);
+
+// 🔹 IMAGE GENERATION const generateImage = async () => { if (!prompt) return alert("Enter an image prompt");
+
+setLoadingImage(true);
+setImage("");
+
+try {
+  const res = await fetch("https://api.openai.com/v1/images/generations", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer YOUR_API_KEY",
+    },
+    body: JSON.stringify({
+      model: "gpt-image-1",
+      prompt,
+      size: "1024x1024",
+    }),
+  });
+
+  const data = await res.json();
+  setImage(data.data[0].url);
+} catch (err) {
+  alert("Image generation failed");
 }
 
-.sidebar{
-  width:220px;
-  height:100vh;
-  background:#020617;
-  position:fixed;
-  padding:20px;
+setLoadingImage(false);
+
+};
+
+// 🔹 AI CHAT const sendMessage = async () => { if (!chatInput) return;
+
+const newHistory = [...chatHistory, { role: "user", content: chatInput }];
+setChatHistory(newHistory);
+setChatInput("");
+setLoadingChat(true);
+
+try {
+  const res = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer YOUR_API_KEY",
+    },
+    body: JSON.stringify({
+      model: "gpt-4o-mini",
+      messages: newHistory,
+    }),
+  });
+
+  const data = await res.json();
+
+  setChatHistory([
+    ...newHistory,
+    { role: "assistant", content: data.choices[0].message.content },
+  ]);
+} catch (err) {
+  alert("Chat failed");
 }
 
-.btn{
-  width:100%;
-  padding:12px;
-  border:none;
-  border-radius:10px;
-  margin-top:10px;
-  font-weight:bold;
-  cursor:pointer;
-}
+setLoadingChat(false);
 
-.new{background:#22c55e;color:white;}
-.logout{background:#ef4444;color:white;}
+};
 
-.main{
+return ( <div className="min-h-screen bg-gradient-to-br from-slate-950 via-black to-slate-900 text-white p-6 grid md:grid-cols-2 gap-6"> {/* IMAGE GENERATOR */} <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 shadow-2xl space-y-4"> <h1 className="text-2xl font-bold">🎨 AI Image Generator</h1>
+
+<input
+      className="w-full p-3 rounded-xl text-black"
+      placeholder="Describe your image..."
+      value={prompt}
+      onChange={(e) => setPrompt(e.target.value)}
+    />
+
+    <button
+      onClick={generateImage}
+      className="w-full bg-green-500 hover:bg-green-600 p-3 rounded-xl font-bold"
+    >
+      {loadingImage ? "Generating..." : "Generate Image"}
+    </button>
+
+    {image && (
+      <img src={image} alt="AI result" className="w-full rounded-2xl shadow-lg" />
+    )}
+  </div>
+
+  {/* AI CHAT */}
+  <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 shadow-2xl flex flex-col">
+    <h1 className="text-2xl font-bold mb-4">💬 AI Chat</h1>
+
+    <div className="flex-1 overflow-y-auto space-y-2 mb-4">
+      {chatHistory.map((msg, i) => (
+        <div
+          key={i}
+          className={`p-2 rounded-xl max-w-[80%] ${
+            msg.role === "user"
+              ? "bg-green-500 self-end"
+              : "bg-gray-700 self-start"
+          }`}
+        >
+          {msg.content}
+        </div>
+      ))}
+    </div>
+
+    <div className="flex gap-2">
+      <input
+        className="flex-1 p-3 rounded-xl text-black"
+        placeholder="Ask anything..."
+        value={chatInput}
+        onChange={(e) => setChatInput(e.target.value)}
+      />
+
+      <button
+        onClick={sendMessage}
+        className="bg-blue-500 hover:bg-blue-600 px-4 rounded-xl font-bold"
+      >
+        {loadingChat ? "..." : "Send"}
+      </button>
+    </div>
+  </div>
+</div>
+
+); }.main{
   margin-left:240px;
   display:flex;
   flex-direction:column;
