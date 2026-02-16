@@ -7,7 +7,7 @@ export default async function handler(req, res) {
     const { message } = req.body;
     if (!message) return res.status(400).json({ error: "Message required" });
 
-    // ===== IMAGE GENERATION =====
+    // ===== IMAGE =====
     if (message.toLowerCase().startsWith("image:")) {
       const prompt = message.replace("image:", "").trim();
 
@@ -15,7 +15,7 @@ export default async function handler(req, res) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`
+          Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`
         },
         body: JSON.stringify({
           model: "openai/dall-e-3",
@@ -24,17 +24,15 @@ export default async function handler(req, res) {
       });
 
       const imgData = await imgRes.json();
-      const imageUrl = imgData?.data?.[0]?.url;
-
-      return res.status(200).json({ image: imageUrl || null });
+      return res.status(200).json({ image: imgData?.data?.[0]?.url || null });
     }
 
-    // ===== NORMAL CHAT =====
+    // ===== CHAT =====
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`
+        Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`
       },
       body: JSON.stringify({
         model: "openai/gpt-3.5-turbo",
@@ -47,8 +45,8 @@ export default async function handler(req, res) {
 
     res.status(200).json({ reply });
 
-  } catch (err) {
-    console.error(err);
+  } catch (e) {
+    console.error(e);
     res.status(500).json({ error: "Server error" });
   }
 }
