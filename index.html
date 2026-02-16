@@ -12,6 +12,8 @@ body{margin:0;font-family:Arial;background:#f7f7f8}
 /* sidebar */
 .sidebar{width:230px;background:#fff;border-right:1px solid #e5e7eb;padding:20px}
 .btn{width:100%;padding:12px;margin-bottom:10px;border:none;border-radius:10px;font-weight:bold;cursor:pointer}
+.login{background:#2563eb;color:#fff}
+.logout{background:#ef4444;color:#fff}
 .new{background:#22c55e;color:#fff}
 
 /* chat */
@@ -36,7 +38,10 @@ input{flex:1;padding:12px;border-radius:12px;border:1px solid #ccc}
 <div class="app">
 
   <div class="sidebar">
+    <button class="btn login" onclick="login()">Login</button>
     <button class="btn new" onclick="newChat()">+ New Chat</button>
+    <button class="btn logout" onclick="logout()">Logout</button>
+    <p id="user"></p>
   </div>
 
   <div class="chat">
@@ -52,6 +57,28 @@ input{flex:1;padding:12px;border-radius:12px;border:1px solid #ccc}
   </div>
 
 </div>
+
+<script>
+/* ===== SIMPLE LOGIN ===== */
+function login(){
+  const name = prompt("Enter your name");
+  if(!name) return;
+  localStorage.setItem("modelai_user", name);
+  showUser();
+}
+
+function logout(){
+  localStorage.removeItem("modelai_user");
+  showUser();
+}
+
+function showUser(){
+  const name = localStorage.getItem("modelai_user");
+  document.getElementById("user").innerText =
+    name ? "👤 " + name : "Not logged in";
+}
+showUser();
+</script>
 
 <script src="/chat.js"></script>
 </body>
