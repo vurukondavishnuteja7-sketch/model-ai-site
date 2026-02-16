@@ -13,89 +13,53 @@ crossorigin="anonymous"></script>
 body{margin:0;font-family:Arial;background:#f7f7f8}
 
 /* layout */
-.app{display:flex;height:100vh}
+.app{display:flex;min-height:100vh}
 
 /* sidebar */
 .sidebar{
-  width:260px;
-  min-width:180px;
-  max-width:400px;
-  background:#fff;
-  border-right:1px solid #e5e7eb;
-  padding:20px;
-  overflow:auto;
-  resize:horizontal; /* adjustable */
+  width:220px;background:#fff;border-right:1px solid #e5e7eb;
+  padding:20px;transition:.3s
 }
+.sidebar.hide{transform:translateX(-100%)}
 
-/* buttons */
-.btn{
-  width:100%;
-  padding:12px;
-  margin-bottom:10px;
-  border:none;
-  border-radius:10px;
-  font-weight:bold;
-  cursor:pointer;
-}
-.login{background:#2563eb;color:#fff}
-.logout{background:#ef4444;color:#fff}
-.new{background:#22c55e;color:#fff}
-
-/* links */
-.links a{
-  display:block;
-  margin-top:10px;
-  color:#2563eb;
-  text-decoration:none;
-  font-weight:bold;
+/* menu button */
+.menuBtn{
+  position:fixed;top:10px;left:10px;z-index:1000;
+  background:#2563eb;color:#fff;border:none;
+  padding:10px 14px;border-radius:8px;cursor:pointer;
 }
 
 /* main */
-.main{
-  flex:1;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  overflow:auto;
-}
-
-/* blog + ai same width */
-.container{
-  width:100%;
-  max-width:900px;
-  margin:20px;
-}
-
-/* search bar */
-.search{
-  width:100%;
-  padding:16px;
-  border-radius:14px;
-  border:1px solid #ccc;
-  font-size:16px;
-  margin-bottom:20px;
-}
+.main{flex:1;padding:20px}
+.container{max-width:950px;margin:auto}
 
 /* card */
 .card{
-  background:#fff;
-  padding:20px;
-  border-radius:14px;
+  background:#fff;padding:20px;border-radius:14px;
   box-shadow:0 2px 8px rgba(0,0,0,.05);
-  margin-bottom:20px;
+  margin-bottom:20px
 }
 
+/* blog image */
+.blog-img{width:100%;border-radius:12px;margin-bottom:12px}
+
 /* chat */
-.messages{height:300px;overflow:auto;margin:15px 0}
-.msg{max-width:70%;padding:12px;border-radius:14px;margin-bottom:10px}
+.messages{height:320px;overflow:auto;margin:15px 0}
+.msg{max-width:80%;padding:12px;border-radius:12px;margin-bottom:10px}
 .user{background:#2563eb;color:#fff;margin-left:auto}
 .bot{background:#e5e7eb}
 
-/* input bar */
-.inputbar{display:flex}
-input{flex:1;padding:12px;border-radius:12px;border:1px solid #ccc}
-.send{margin-left:8px;padding:12px 18px;background:#2563eb;color:#fff;border:none;border-radius:12px;cursor:pointer}
-.voice{margin-left:8px;padding:12px;background:#22c55e;color:#fff;border:none;border-radius:12px;cursor:pointer}
+/* input */
+.inputbar{display:flex;gap:8px}
+#input{flex:1;padding:12px;border-radius:12px;border:1px solid #ccc}
+.send{background:#2563eb;color:#fff;border:none;border-radius:12px;padding:12px 16px;cursor:pointer}
+.voice{background:#22c55e;color:#fff;border:none;border-radius:12px;padding:12px 16px;cursor:pointer}
+
+/* footer */
+.footer{
+  text-align:center;padding:25px;background:#fff;
+  border-top:1px solid #e5e7eb;margin-top:40px;font-size:14px
+}
 </style>
 
 <!-- Firebase -->
@@ -105,63 +69,72 @@ input{flex:1;padding:12px;border-radius:12px;border:1px solid #ccc}
 
 <body>
 
+<button class="menuBtn" onclick="toggleSidebar()">☰</button>
+
 <div class="app">
 
 <!-- SIDEBAR -->
-<div class="sidebar">
-
-<button class="btn login" onclick="login()">Google Login</button>
-<button class="btn new" onclick="newChat()">+ New Chat</button>
-<button class="btn logout" onclick="logout()">Logout</button>
-
+<div id="sidebar" class="sidebar">
+<button onclick="login()">Google Login</button>
+<button onclick="newChat()">New Chat</button>
 <p id="user">Not logged in</p>
-
-<h4>Pages</h4>
-<div class="links">
-<a href="/about.html">About</a>
-<a href="/contact.html">Contact</a>
-<a href="/privacy-policy.html">Privacy Policy</a>
-<a href="/terms.html">Terms</a>
-<a href="/sitemap.html">Sitemap</a>
-</div>
-
-<h4>Blogs</h4>
-<div class="links">
-<a href="/blog1.html">Best AI Tools</a>
-<a href="/blog2.html">AI Homework</a>
-<a href="/blog3.html">ChatGPT Alternatives</a>
-</div>
-
 </div>
 
 <!-- MAIN -->
 <div class="main">
-
 <div class="container">
 
-<!-- SEARCH -->
-<input class="search" placeholder="Search AI tools, blogs, questions..." />
+<!-- ⭐ TOP 10 AI BLOGS -->
+<div id="blogs">
 
-<!-- BLOG CARD -->
+<!-- Repeat blog card 10 times -->
+<script>
+const blogTitles=[
+"Best AI Tools for Students",
+"AI Homework Help Guide",
+"Top ChatGPT Alternatives",
+"AI Coding for Beginners",
+"Future of AI in Daily Life",
+"AI Image Generator Guide",
+"AI for Productivity",
+"Earn Money Using AI",
+"AI in Education Benefits",
+"Next Generation AI Technology"
+];
+
+document.write(
+blogTitles.map((t,i)=>`
 <div class="card">
-<h2>Welcome to Model AI</h2>
-<p>
-Free AI assistant for students, coding, and productivity.
-Scroll down to use AI chat.
-</p>
+<img src="https://picsum.photos/900/400?random=${i}" class="blog-img">
+<h2>${t}</h2>
+<p>Learn powerful insights about ${t.toLowerCase()} and improve your skills using modern artificial intelligence.</p>
+</div>
+`).join("")
+);
+</script>
+
 </div>
 
-<!-- AI CHAT -->
+<!-- ⭐ AI SECTION ONLY AFTER BLOGS -->
 <div class="card">
+<h2 style="text-align:center">Model AI Assistant</h2>
 
 <div id="messages" class="messages"></div>
 
 <div class="inputbar">
-<input id="input" placeholder="Type message..." />
+<input id="input" placeholder="Ask anything to Model AI...">
 <button class="voice" onclick="startVoice()">🎤</button>
 <button class="send" onclick="sendMsg()">Send</button>
 </div>
+</div>
 
+<!-- ⭐ LEGAL FOOTER LAST -->
+<div class="footer">
+© 2026 Model AI. All rights reserved.<br><br>
+<a href="/about.html">About</a> |
+<a href="/contact.html">Contact</a> |
+<a href="/privacy-policy.html">Privacy Policy</a> |
+<a href="/terms.html">Terms</a>
 </div>
 
 </div>
@@ -169,7 +142,12 @@ Scroll down to use AI chat.
 </div>
 
 <script>
-/* Firebase */
+/* sidebar toggle */
+function toggleSidebar(){
+document.getElementById("sidebar").classList.toggle("hide");
+}
+
+/* Firebase login */
 const firebaseConfig={
 apiKey:"AIzaSyDUcWSbU-ELP7Erx9yGPbq65clsn2ME8pk",
 authDomain:"model-ai-727b1.firebaseapp.com",
@@ -178,22 +156,47 @@ projectId:"model-ai-727b1"
 firebase.initializeApp(firebaseConfig);
 const auth=firebase.auth();
 
-/* login */
 function login(){
 const provider=new firebase.auth.GoogleAuthProvider();
 auth.signInWithPopup(provider).catch(e=>alert(e.message));
 }
 
-/* logout */
-function logout(){auth.signOut();}
-
-/* show user */
 auth.onAuthStateChanged(user=>{
-document.getElementById("user").innerText=
-user?"👤 "+user.email:"Not logged in";
+document.getElementById("user").innerText=user?"👤 "+user.email:"Not logged in";
 });
+
+/* send message */
+function sendMsg(){
+const input=document.getElementById("input");
+const text=input.value.trim();
+if(!text) return;
+
+const box=document.getElementById("messages");
+
+box.innerHTML+=`<div class="msg user">${text}</div>
+<div class="msg bot">AI reply working ✔</div>`;
+
+input.value="";
+box.scrollTop=box.scrollHeight;
+
+speechSynthesis.speak(new SpeechSynthesisUtterance("AI reply working"));
+}
+
+/* enter key */
+document.getElementById("input").addEventListener("keydown",e=>{
+if(e.key==="Enter"){e.preventDefault();sendMsg();}
+});
+
+/* voice input */
+function startVoice(){
+const rec=new (window.SpeechRecognition||window.webkitSpeechRecognition)();
+rec.lang="en-US";
+rec.start();
+rec.onresult=e=>{
+document.getElementById("input").value=e.results[0][0].transcript;
+};
+}
 </script>
 
-<script src="/chat.js"></script>
 </body>
 </html>
