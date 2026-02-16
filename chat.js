@@ -1,41 +1,48 @@
-const msgBox=document.getElementById("messages");
-const input=document.getElementById("input");
+const msgBox = document.getElementById("messages");
+const input = document.getElementById("input");
 
-/* add message */
-function addMsg(text,cls){
-const div=document.createElement("div");
-div.className="msg "+cls;
-div.innerText=text;
-msgBox.appendChild(div);
-msgBox.scrollTop=msgBox.scrollHeight;
+function addMsg(text, cls) {
+  const div = document.createElement("div");
+  div.className = "msg " + cls;
+  div.innerText = text;
+  msgBox.appendChild(div);
+  msgBox.scrollTop = msgBox.scrollHeight;
 }
 
-/* send */
-async function sendMsg(){
-const text=input.value.trim();
-if(!text) return;
+async function sendMsg() {
+  const text = input.value.trim();
+  if (!text) return;
 
-addMsg(text,"user");
-input.value="";
+  addMsg(text, "user");
+  input.value = "";
 
-const reply="This is demo AI reply. Connect OpenRouter later.";
-addMsg(reply,"bot");
+  addMsg("Thinking...", "bot");
 
-/* voice reply */
-speechSynthesis.speak(new SpeechSynthesisUtterance(reply));
+  try {
+    const res = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: text })
+    });
+
+    const data = await res.json();
+
+    msgBox.lastChild.innerText = data.reply;
+
+    speechSynthesis.speak(new SpeechSynthesisUtterance(data.reply));
+
+  } catch {
+    msgBox.lastChild.innerText = "Network error.";
+  }
 }
 
-/* voice to text */
-function startVoice(){
-const rec=new(window.SpeechRecognition||window.webkitSpeechRecognition)();
-rec.lang="en-US";
-rec.start();
-rec.onresult=e=>{
-input.value=e.results[0][0].transcript;
-};
+function startVoice() {
+  const rec = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+  rec.lang = "en-US";
+  rec.start();
+  rec.onresult = e => input.value = e.results[0][0].transcript;
 }
 
-/* new chat */
-function newChat(){
-msgBox.innerHTML="";
+function newChat() {
+  msgBox.innerHTML = "";
 }
