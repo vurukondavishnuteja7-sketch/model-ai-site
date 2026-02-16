@@ -11,10 +11,11 @@ body{margin:0;font-family:Arial;background:#f7f7f8}
 
 /* sidebar */
 .sidebar{
-  width:230px;
+  width:240px;
   background:#fff;
   border-right:1px solid #e5e7eb;
   padding:20px;
+  overflow-y:auto;          /* ⭐ scroll enable */
 }
 
 .btn{
@@ -34,10 +35,11 @@ body{margin:0;font-family:Arial;background:#f7f7f8}
 /* sidebar links */
 .links a{
   display:block;
-  margin-top:12px;
+  margin-top:10px;
   color:#2563eb;
   text-decoration:none;
   font-weight:bold;
+  font-size:14px;
 }
 
 /* chat */
@@ -54,6 +56,8 @@ body{margin:0;font-family:Arial;background:#f7f7f8}
 input{flex:1;padding:12px;border-radius:12px;border:1px solid #ccc}
 .send{margin-left:8px;padding:12px 18px;background:#2563eb;color:#fff;border:none;border-radius:12px;cursor:pointer}
 .voice{margin-left:8px;padding:12px;background:#22c55e;color:#fff;border:none;border-radius:12px;cursor:pointer}
+
+h4{margin-top:18px;margin-bottom:6px}
 </style>
 
 <!-- Firebase -->
@@ -67,6 +71,7 @@ input{flex:1;padding:12px;border-radius:12px;border:1px solid #ccc}
 
   <!-- SIDEBAR -->
   <div class="sidebar">
+
     <button class="btn login" onclick="login()">Google Login</button>
     <button class="btn new" onclick="newChat()">+ New Chat</button>
     <button class="btn logout" onclick="logout()">Logout</button>
@@ -74,6 +79,7 @@ input{flex:1;padding:12px;border-radius:12px;border:1px solid #ccc}
     <p id="user">Not logged in</p>
 
     <!-- LEGAL LINKS -->
+    <h4>Pages</h4>
     <div class="links">
       <a href="/about.html">About</a>
       <a href="/contact.html">Contact</a>
@@ -81,11 +87,27 @@ input{flex:1;padding:12px;border-radius:12px;border:1px solid #ccc}
       <a href="/terms.html">Terms</a>
       <a href="/sitemap.html">Sitemap</a>
     </div>
+
+    <!-- BLOG LINKS -->
+    <h4>Blogs</h4>
+    <div class="links">
+      <a href="/blog1.html">Best AI Tools for Students</a>
+      <a href="/blog2.html">AI for Homework</a>
+      <a href="/blog3.html">ChatGPT Alternatives</a>
+      <a href="/blog4.html">AI Image Generator Guide</a>
+      <a href="/blog5.html">AI Coding for Beginners</a>
+      <a href="/blog6.html">Benefits of AI in Education</a>
+      <a href="/blog7.html">Future of AI in Daily Life</a>
+      <a href="/blog8.html">AI Tools to Earn Money</a>
+      <a href="/blog9.html">AI vs Human Intelligence</a>
+      <a href="/blog10.html">Top Productivity AI Apps</a>
+    </div>
+
   </div>
 
   <!-- CHAT -->
   <div class="chat">
-    <div class="header">Model AI</div>
+    <div class="header">Model AI Assistant</div>
 
     <div id="messages" class="messages"></div>
 
@@ -99,7 +121,6 @@ input{flex:1;padding:12px;border-radius:12px;border:1px solid #ccc}
 </div>
 
 <script>
-/* Firebase config */
 const firebaseConfig = {
   apiKey: "AIzaSyDUcWSbU-ELP7Erx9yGPbq65clsn2ME8pk",
   authDomain: "model-ai-727b1.firebaseapp.com",
@@ -109,18 +130,15 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 
-/* login */
 function login(){
   const provider = new firebase.auth.GoogleAuthProvider();
   auth.signInWithPopup(provider).catch(e=>alert(e.message));
 }
 
-/* logout */
 function logout(){
   auth.signOut();
 }
 
-/* show user */
 auth.onAuthStateChanged(user=>{
   document.getElementById("user").innerText =
     user ? "👤 " + user.email : "Not logged in";
