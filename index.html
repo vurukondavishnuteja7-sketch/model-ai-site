@@ -10,24 +10,56 @@
 crossorigin="anonymous"></script>
 
 <style>
-body{margin:0;font-family:Arial;background:#f7f7f8}
+body{margin:0;font-family:Arial;background:#f5f7fb}
 
 /* layout */
 .app{display:flex;min-height:100vh}
 
+/* BIG TITLE */
+.header{
+text-align:center;
+padding:30px 10px;
+font-size:34px;
+font-weight:bold;
+color:#2563eb;
+background:#fff;
+border-bottom:1px solid #e5e7eb
+}
+
 /* sidebar */
 .sidebar{
-  width:220px;background:#fff;border-right:1px solid #e5e7eb;
-  padding:20px;transition:.3s
+width:240px;
+background:#fff;
+border-right:1px solid #e5e7eb;
+padding:20px;
+overflow-y:auto;
+position:sticky;
+top:0;
+height:100vh;
+transition:.3s
 }
 .sidebar.hide{transform:translateX(-100%)}
 
 /* menu button */
 .menuBtn{
-  position:fixed;top:10px;left:10px;z-index:1000;
-  background:#2563eb;color:#fff;border:none;
-  padding:10px 14px;border-radius:8px;cursor:pointer;
+position:fixed;top:15px;left:15px;z-index:1000;
+background:#2563eb;color:#fff;border:none;
+padding:10px 14px;border-radius:8px;cursor:pointer;
 }
+
+/* sidebar buttons */
+.btn{
+width:100%;
+padding:12px;
+margin-bottom:10px;
+border:none;
+border-radius:10px;
+font-weight:bold;
+cursor:pointer
+}
+.login{background:#2563eb;color:#fff}
+.logout{background:#ef4444;color:#fff}
+.new{background:#22c55e;color:#fff}
 
 /* main */
 .main{flex:1;padding:20px}
@@ -35,16 +67,25 @@ body{margin:0;font-family:Arial;background:#f7f7f8}
 
 /* card */
 .card{
-  background:#fff;padding:20px;border-radius:14px;
-  box-shadow:0 2px 8px rgba(0,0,0,.05);
-  margin-bottom:20px
+background:#fff;
+padding:20px;
+border-radius:14px;
+box-shadow:0 2px 8px rgba(0,0,0,.05);
+margin-bottom:25px
 }
 
 /* blog image */
-.blog-img{width:100%;border-radius:12px;margin-bottom:12px}
+.blog-img{
+width:100%;
+border-radius:12px;
+margin-bottom:12px
+}
+
+/* blog text */
+.blog-text{line-height:1.7;color:#333}
 
 /* chat */
-.messages{height:320px;overflow:auto;margin:15px 0}
+.messages{height:340px;overflow:auto;margin:15px 0}
 .msg{max-width:80%;padding:12px;border-radius:12px;margin-bottom:10px}
 .user{background:#2563eb;color:#fff;margin-left:auto}
 .bot{background:#e5e7eb}
@@ -57,8 +98,12 @@ body{margin:0;font-family:Arial;background:#f7f7f8}
 
 /* footer */
 .footer{
-  text-align:center;padding:25px;background:#fff;
-  border-top:1px solid #e5e7eb;margin-top:40px;font-size:14px
+text-align:center;
+padding:30px;
+background:#fff;
+border-top:1px solid #e5e7eb;
+margin-top:40px;
+font-size:14px
 }
 </style>
 
@@ -75,60 +120,65 @@ body{margin:0;font-family:Arial;background:#f7f7f8}
 
 <!-- SIDEBAR -->
 <div id="sidebar" class="sidebar">
-<button onclick="login()">Google Login</button>
-<button onclick="newChat()">New Chat</button>
+
+<button class="btn login" onclick="login()">Google Login</button>
+<button class="btn new" onclick="newChat()">New Chat</button>
+<button class="btn logout" onclick="logout()">Logout</button>
+
 <p id="user">Not logged in</p>
+
 </div>
 
 <!-- MAIN -->
 <div class="main">
 <div class="container">
 
-<!-- ⭐ TOP 10 AI BLOGS -->
-<div id="blogs">
+<div class="header">Model AI</div>
 
-<!-- Repeat blog card 10 times -->
+<!-- ⭐ 10 AI BLOGS TOP -->
 <script>
-const blogTitles=[
-"Best AI Tools for Students",
-"AI Homework Help Guide",
-"Top ChatGPT Alternatives",
-"AI Coding for Beginners",
-"Future of AI in Daily Life",
-"AI Image Generator Guide",
-"AI for Productivity",
+const blogs = [
+"AI Tools for Students",
+"AI Homework Help",
+"ChatGPT Alternatives",
+"AI Coding Guide",
+"Future of AI",
+"AI Image Generation",
+"AI Productivity",
 "Earn Money Using AI",
-"AI in Education Benefits",
-"Next Generation AI Technology"
+"AI in Education",
+"Next-Gen AI Technology"
 ];
 
 document.write(
-blogTitles.map((t,i)=>`
+blogs.map((t,i)=>`
 <div class="card">
-<img src="https://picsum.photos/900/400?random=${i}" class="blog-img">
+<img src="https://source.unsplash.com/900x400/?artificial-intelligence,technology&sig=${i}" class="blog-img">
 <h2>${t}</h2>
-<p>Learn powerful insights about ${t.toLowerCase()} and improve your skills using modern artificial intelligence.</p>
+<p class="blog-text">
+Artificial Intelligence is transforming education, productivity, coding, and daily life.
+This article explains ${t.toLowerCase()} in detail, including tools, benefits,
+future scope, and real-world usage to help you learn and grow faster using AI.
+</p>
 </div>
 `).join("")
 );
 </script>
 
-</div>
-
-<!-- ⭐ AI SECTION ONLY AFTER BLOGS -->
+<!-- ⭐ AI LAST -->
 <div class="card">
-<h2 style="text-align:center">Model AI Assistant</h2>
+<h2 style="text-align:center">Ask Model AI</h2>
 
 <div id="messages" class="messages"></div>
 
 <div class="inputbar">
-<input id="input" placeholder="Ask anything to Model AI...">
+<input id="input" placeholder="Ask anything about AI, coding, study...">
 <button class="voice" onclick="startVoice()">🎤</button>
 <button class="send" onclick="sendMsg()">Send</button>
 </div>
 </div>
 
-<!-- ⭐ LEGAL FOOTER LAST -->
+<!-- ⭐ LEGAL FOOTER -->
 <div class="footer">
 © 2026 Model AI. All rights reserved.<br><br>
 <a href="/about.html">About</a> |
@@ -142,12 +192,11 @@ blogTitles.map((t,i)=>`
 </div>
 
 <script>
-/* sidebar toggle */
 function toggleSidebar(){
 document.getElementById("sidebar").classList.toggle("hide");
 }
 
-/* Firebase login */
+/* Firebase */
 const firebaseConfig={
 apiKey:"AIzaSyDUcWSbU-ELP7Erx9yGPbq65clsn2ME8pk",
 authDomain:"model-ai-727b1.firebaseapp.com",
@@ -161,25 +210,27 @@ const provider=new firebase.auth.GoogleAuthProvider();
 auth.signInWithPopup(provider).catch(e=>alert(e.message));
 }
 
+function logout(){ auth.signOut(); }
+
 auth.onAuthStateChanged(user=>{
 document.getElementById("user").innerText=user?"👤 "+user.email:"Not logged in";
 });
 
-/* send message */
-function sendMsg(){
+/* REAL AI placeholder (API connect next step) */
+async function sendMsg(){
 const input=document.getElementById("input");
 const text=input.value.trim();
 if(!text) return;
 
 const box=document.getElementById("messages");
 
-box.innerHTML+=`<div class="msg user">${text}</div>
-<div class="msg bot">AI reply working ✔</div>`;
+box.innerHTML+=`<div class="msg user">${text}</div>`;
+box.innerHTML+=`<div class="msg bot">Connecting to real AI...</div>`;
 
 input.value="";
 box.scrollTop=box.scrollHeight;
 
-speechSynthesis.speak(new SpeechSynthesisUtterance("AI reply working"));
+speechSynthesis.speak(new SpeechSynthesisUtterance("Connecting to AI"));
 }
 
 /* enter key */
@@ -187,7 +238,7 @@ document.getElementById("input").addEventListener("keydown",e=>{
 if(e.key==="Enter"){e.preventDefault();sendMsg();}
 });
 
-/* voice input */
+/* voice */
 function startVoice(){
 const rec=new (window.SpeechRecognition||window.webkitSpeechRecognition)();
 rec.lang="en-US";
