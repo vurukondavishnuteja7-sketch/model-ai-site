@@ -4,35 +4,25 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Model AI – Free AI Chat, Image Generator & Voice Assistant</title>
+<title>Model AI – Free AI Chat & Image Generator</title>
 
-<meta name="description"
-content="Model AI is a free AI chatbot with image generation, voice assistant, and powerful AI tools for students and developers.">
-
-<meta name="keywords"
-content="AI chatbot, free AI, image generator, voice AI, ChatGPT alternative, Model AI">
-
-<!-- Google verification (replace later) -->
-<meta name="google-site-verification" content="PASTE_YOUR_CODE_HERE">
+<meta name="description" content="Free AI chatbot with image generation.">
+<meta name="keywords" content="AI chatbot, image generator, free AI">
 
 <style>
 body{margin:0;font-family:Arial;background:#f9fafb;color:#000;display:flex;height:100vh}
 
 .sidebar{
-width:230px;background:#ffffff;border-right:1px solid #e5e7eb;
+width:220px;background:#fff;border-right:1px solid #e5e7eb;
 padding:15px;display:flex;flex-direction:column;gap:10px
 }
 
 .btn{padding:12px;border:none;border-radius:10px;font-weight:bold;cursor:pointer}
 .new{background:#2563eb;color:#fff}
-.logout{background:#ef4444;color:#fff}
 
 .main{flex:1;display:flex;flex-direction:column}
 
-.header{
-padding:15px;border-bottom:1px solid #e5e7eb;
-font-size:18px;font-weight:bold;background:#ffffff
-}
+.header{padding:15px;border-bottom:1px solid #e5e7eb;font-weight:bold}
 
 .chat{flex:1;overflow:auto;padding:20px;display:flex;flex-direction:column;gap:12px}
 
@@ -41,11 +31,9 @@ font-size:18px;font-weight:bold;background:#ffffff
 .bot{background:#e5e7eb}
 
 .input{display:flex;padding:10px;border-top:1px solid #e5e7eb;gap:8px;background:#fff}
-input{flex:1;padding:12px;border-radius:10px;border:1px solid #d1d5db}
+input{flex:1;padding:12px;border-radius:10px;border:1px solid #ccc}
 .send{background:#2563eb;color:#fff;border:none;padding:12px;border-radius:10px}
 .icon{background:#e5e7eb;border:none;padding:10px;border-radius:10px}
-
-.links a{font-size:14px;color:#2563eb;text-decoration:none;margin-top:4px}
 </style>
 </head>
 
@@ -53,16 +41,13 @@ input{flex:1;padding:12px;border-radius:10px;border:1px solid #d1d5db}
 
 <div class="sidebar">
 <button class="btn new" onclick="newChat()">+ New Chat</button>
-<button class="btn logout">Logout</button>
 
 <hr>
 
-<div class="links">
-<a href="/privacy-policy.html">Privacy Policy</a><br>
-<a href="/terms.html">Terms</a><br>
-<a href="/about.html">About</a><br>
+<a href="/privacy-policy.html">Privacy</a>
+<a href="/terms.html">Terms</a>
+<a href="/about.html">About</a>
 <a href="/contact.html">Contact</a>
-</div>
 </div>
 
 <div class="main">
@@ -71,43 +56,58 @@ input{flex:1;padding:12px;border-radius:10px;border:1px solid #d1d5db}
 <div id="chat" class="chat"></div>
 
 <div class="input">
-<button class="icon" onclick="imagePrompt()">🖼️</button>
+<button class="icon" onclick="askImage()">🖼️</button>
 <input id="msg" placeholder="Type message...">
 <button class="send" onclick="send()">Send</button>
 </div>
 </div>
 
 <script>
+const chat = document.getElementById("chat");
+
 function add(text,type,isImg=false){
-const d=document.createElement(isImg?"img":"div");
-if(isImg){d.src=text;d.style.maxWidth="200px"}
-else{d.className="msg "+type;d.textContent=text}
-chat.appendChild(d);chat.scrollTop=chat.scrollHeight;
+  const el=document.createElement(isImg?"img":"div");
+
+  if(isImg){
+    el.src=text;
+    el.style.maxWidth="200px";
+  }else{
+    el.className="msg "+type;
+    el.textContent=text;
+  }
+
+  chat.appendChild(el);
+  chat.scrollTop=chat.scrollHeight;
 }
 
 async function send(){
-const text=msg.value.trim();
-if(!text) return;
+  const input=document.getElementById("msg");
+  const text=input.value.trim();
+  if(!text) return;
 
-add(text,"user"); msg.value="";
+  add(text,"user");
+  input.value="";
 
-const res=await fetch("/api/chat",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({message:text})
-});
+  const res=await fetch("/api/chat",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({message:text})
+  });
 
-const data=await res.json();
+  const data=await res.json();
 
-if(data.image) add(data.image,"bot",true);
-else add(data.reply,"bot");
+  if(data.image){
+    add(data.image,"bot",true);
+  }else{
+    add(data.reply,"bot");
+  }
 }
 
-function newChat(){chat.innerHTML=""}
+function newChat(){ chat.innerHTML=""; }
 
-function imagePrompt(){
-const p=prompt("Enter image description");
-if(p) msg.value="image:"+p;
+function askImage(){
+  const p=prompt("Enter image description");
+  if(p) document.getElementById("msg").value="image: "+p;
 }
 </script>
 
