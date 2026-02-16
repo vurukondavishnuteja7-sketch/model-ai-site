@@ -24,7 +24,7 @@ export default async function handler(req, res) {
       reply: data.choices?.[0]?.message?.content || "No reply"
     });
 
-  } catch (err) {
+  } catch {
     res.status(500).json({ error: "AI error" });
   }
 }
