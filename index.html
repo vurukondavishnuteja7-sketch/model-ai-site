@@ -214,8 +214,47 @@ auth.onAuthStateChanged(user=>{
 document.getElementById("user").innerText=user?"👤 "+user.email:"Not logged in";
 });
 
-/* REAL AI placeholder (API connect next step) */
 async function sendMsg(){
+const input = document.getElementById("input");
+const text = input.value.trim();
+if(!text) return;
+
+const box = document.getElementById("messages");
+
+/* user msg */
+box.innerHTML += `<div class="msg user">${text}</div>`;
+input.value = "";
+box.scrollTop = box.scrollHeight;
+
+/* loading */
+const loading = document.createElement("div");
+loading.className = "msg bot";
+loading.innerText = "Thinking...";
+box.appendChild(loading);
+box.scrollTop = box.scrollHeight;
+
+try{
+
+const res = await fetch("/api/chat", {
+method: "POST",
+headers: { "Content-Type": "application/json" },
+body: JSON.stringify({ message: text })
+});
+
+const data = await res.json();
+
+/* replace loading with AI reply */
+loading.innerText = data.reply || "No response";
+
+/* voice speak */
+speechSynthesis.speak(new SpeechSynthesisUtterance(data.reply));
+
+}catch(err){
+loading.innerText = "AI connection error ❌";
+}
+
+box.scrollTop = box.scrollHeight;
+}
 const input=document.getElementById("input");
 const text=input.value.trim();
 if(!text) return;
