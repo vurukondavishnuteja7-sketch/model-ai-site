@@ -1,14 +1,23 @@
 const messages = document.getElementById("messages");
 const input = document.getElementById("input");
 
+/* add message */
 function addMessage(text, type){
   const div = document.createElement("div");
   div.className = "msg " + type;
   div.textContent = text;
   messages.appendChild(div);
   messages.scrollTop = messages.scrollHeight;
+
+  // 🔊 AI voice speak for bot reply
+  if(type === "bot"){
+    const speech = new SpeechSynthesisUtterance(text);
+    speech.lang = "en-US";
+    speechSynthesis.speak(speech);
+  }
 }
 
+/* send message */
 async function sendMsg(){
   const text = input.value.trim();
   if(!text) return;
@@ -29,13 +38,15 @@ async function sendMsg(){
     });
 
     const data = await res.json();
-    loading.textContent = data.reply || "No reply";
+    loading.remove();
+    addMessage(data.reply || "No reply","bot");
 
   }catch{
     loading.textContent = "Server error";
   }
 }
 
+/* voice input */
 function startVoice(){
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if(!SpeechRecognition) return alert("Voice not supported");
@@ -46,6 +57,7 @@ function startVoice(){
   rec.onresult=e=> input.value=e.results[0][0].transcript;
 }
 
+/* new chat */
 function newChat(){
   messages.innerHTML="";
 }
