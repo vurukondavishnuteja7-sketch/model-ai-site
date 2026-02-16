@@ -1,88 +1,30 @@
-/* ================= CONFIG ================= */
-
-/* ⚠️ IMPORTANT:
-   OpenRouter API key ni Vercel Environment Variable lo pettali
-   Name: OPENROUTER_API_KEY
-*/
-
-const messages = document.getElementById("messages");
-const input = document.getElementById("input");
-
-
-/* ================= ADD MESSAGE UI ================= */
-
-function addMessage(text, type) {
-  const div = document.createElement("div");
-  div.className = "msg " + type;
-  div.textContent = text;
-
-  messages.appendChild(div);
-  messages.scrollTop = messages.scrollHeight;
-}
-
-
-/* ================= SEND MESSAGE ================= */
-
-async function sendMsg() {
-  const text = input.value.trim();
-  if (!text) return;
-
-  // user message
-  addMessage(text, "user");
-  input.value = "";
-
-  // loading message
-  const loading = document.createElement("div");
-  loading.className = "msg bot";
-  loading.textContent = "Thinking...";
-  messages.appendChild(loading);
-  messages.scrollTop = messages.scrollHeight;
+export default async function handler(req, res) {
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
 
   try {
-    const res = await fetch("/api/chat", {
+    const { message } = req.body;
+
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
+        "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ message: text })
+      body: JSON.stringify({
+        model: "mistralai/mistral-7b-instruct",
+        messages: [{ role: "user", content: message }]
+      })
     });
 
-    const data = await res.json();
+    const data = await response.json();
 
-    // replace loading with reply
-    loading.textContent = data.reply || "No reply from AI";
-    messages.scrollTop = messages.scrollHeight;
+    res.status(200).json({
+      reply: data.choices?.[0]?.message?.content || "No reply"
+    });
 
   } catch (err) {
-    loading.textContent = "Error connecting to AI";
-    console.error(err);
+    res.status(500).json({ error: "AI error" });
   }
-}
-
-
-/* ================= VOICE INPUT ================= */
-
-function startVoice() {
-  const SpeechRecognition =
-    window.SpeechRecognition || window.webkitSpeechRecognition;
-
-  if (!SpeechRecognition) {
-    alert("Voice not supported in this browser");
-    return;
-  }
-
-  const rec = new SpeechRecognition();
-  rec.lang = "en-US";
-  rec.start();
-
-  rec.onresult = (e) => {
-    input.value = e.results[0][0].transcript;
-  };
-}
-
-
-/* ================= NEW CHAT ================= */
-
-function newChat() {
-  messages.innerHTML = "";
 }
