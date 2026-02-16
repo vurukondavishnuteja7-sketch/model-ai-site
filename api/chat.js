@@ -1,11 +1,12 @@
-const API_KEY = "PASTE_OPENROUTER_KEY";
+const OPENROUTER_KEY = "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";
 
+/* UI */
 const messagesDiv = document.getElementById("messages");
 const input = document.getElementById("input");
 
 let currentUser = null;
 
-/* ---------------- LOGIN ---------------- */
+/* ================= LOGIN ================= */
 
 auth.onAuthStateChanged(user=>{
   currentUser = user;
@@ -14,7 +15,8 @@ auth.onAuthStateChanged(user=>{
 
 function googleLogin(){
   const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider);
+  auth.signInWithPopup(provider)
+    .catch(err=>alert(err.message));
 }
 
 function logout(){
@@ -22,7 +24,7 @@ function logout(){
   messagesDiv.innerHTML = "";
 }
 
-/* ---------------- CHAT UI ---------------- */
+/* ================= CHAT UI ================= */
 
 function addMessage(text, cls){
   const div = document.createElement("div");
@@ -32,7 +34,7 @@ function addMessage(text, cls){
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
 
-/* ---------------- FIRESTORE HISTORY ---------------- */
+/* ================= FIRESTORE ================= */
 
 async function saveMessage(role, text){
   if(!currentUser) return;
@@ -62,10 +64,10 @@ async function loadHistory(){
   });
 }
 
-/* ---------------- VOICE INPUT ---------------- */
+/* ================= VOICE INPUT ================= */
 
 function startVoice(){
-  const rec = new webkitSpeechRecognition();
+  const rec = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
   rec.lang = "en-US";
   rec.start();
 
@@ -74,7 +76,7 @@ function startVoice(){
   };
 }
 
-/* ---------------- AI MESSAGE ---------------- */
+/* ================= AI ================= */
 
 async function sendMsg(){
   const text = input.value.trim();
@@ -90,7 +92,7 @@ async function sendMsg(){
     const res = await fetch("https://openrouter.ai/api/v1/chat/completions",{
       method:"POST",
       headers:{
-        "Authorization":"Bearer " + API_KEY,
+        "Authorization":"Bearer " + OPENROUTER_KEY,
         "Content-Type":"application/json"
       },
       body:JSON.stringify({
@@ -111,7 +113,7 @@ async function sendMsg(){
   }
 }
 
-/* ---------------- NEW CHAT ---------------- */
+/* ================= NEW CHAT ================= */
 
 function newChat(){
   messagesDiv.innerHTML = "";
