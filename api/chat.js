@@ -7,43 +7,48 @@ export default async function handler(req, res) {
     const { message } = req.body;
     if (!message) return res.status(400).json({ error: "Message required" });
 
-    // IMAGE
+    // ===== IMAGE GENERATION =====
     if (message.toLowerCase().startsWith("image:")) {
       const prompt = message.replace("image:", "").trim();
 
-      const img = await fetch("https://openrouter.ai/api/v1/images/generations", {
+      const imgRes = await fetch("https://openrouter.ai/api/v1/images/generations", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+          "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`
         },
         body: JSON.stringify({
           model: "openai/dall-e-3",
-          prompt,
-        }),
+          prompt
+        })
       });
 
-      const imgData = await img.json();
-      return res.status(200).json({ image: imgData?.data?.[0]?.url });
+      const imgData = await imgRes.json();
+      const imageUrl = imgData?.data?.[0]?.url;
+
+      return res.status(200).json({ image: imageUrl || null });
     }
 
-    // CHAT
+    // ===== NORMAL CHAT =====
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`
       },
       body: JSON.stringify({
         model: "openai/gpt-3.5-turbo",
-        messages: [{ role: "user", content: message }],
-      }),
+        messages: [{ role: "user", content: message }]
+      })
     });
 
     const data = await response.json();
-    res.status(200).json({ reply: data?.choices?.[0]?.message?.content });
+    const reply = data?.choices?.[0]?.message?.content || "No reply";
 
-  } catch {
+    res.status(200).json({ reply });
+
+  } catch (err) {
+    console.error(err);
     res.status(500).json({ error: "Server error" });
   }
 }
