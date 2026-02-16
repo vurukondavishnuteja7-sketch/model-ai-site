@@ -5,42 +5,35 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Model AI</title>
 
-<!-- Firebase -->
+<!-- Firebase Auth only -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <style>
-body{margin:0;font-family:Arial;background:#fff;}
-.app{display:flex;height:100vh;}
+body{margin:0;font-family:Arial;background:#ffffff}
+.app{display:flex;height:100vh}
 
-.sidebar{
-  width:220px;background:#f3f3f3;padding:20px;
-}
+/* sidebar */
+.sidebar{width:220px;background:#f3f4f6;padding:20px}
+.btn{width:100%;padding:12px;margin-bottom:10px;border:none;border-radius:10px;font-weight:bold;cursor:pointer}
+.login{background:#2563eb;color:#fff}
+.logout{background:#ef4444;color:#fff}
+.new{background:#22c55e;color:#fff}
 
-.btn{
-  width:100%;padding:12px;margin-bottom:10px;
-  border:none;border-radius:10px;font-weight:bold;cursor:pointer;
-}
+/* chat */
+.chat{flex:1;display:flex;flex-direction:column}
+.header{padding:15px;border-bottom:1px solid #eee;font-size:20px;font-weight:bold}
+.messages{flex:1;overflow:auto;padding:20px;background:#fafafa}
 
-.login{background:#2563eb;color:#fff;}
-.logout{background:#ef4444;color:#fff;}
-.new{background:#22c55e;color:#fff;}
+.msg{max-width:70%;padding:10px 14px;border-radius:14px;margin-bottom:10px}
+.user{background:#2563eb;color:#fff;margin-left:auto}
+.bot{background:#e5e7eb}
 
-.chat{flex:1;display:flex;flex-direction:column;}
-.header{padding:15px;border-bottom:1px solid #eee;font-size:20px;font-weight:bold;}
-
-.messages{flex:1;overflow:auto;padding:20px;background:#fafafa;}
-
-.msg{max-width:70%;padding:10px 14px;border-radius:14px;margin-bottom:10px;}
-.user{background:#2563eb;color:#fff;margin-left:auto;}
-.bot{background:#e5e7eb;}
-
-.inputbar{display:flex;padding:10px;border-top:1px solid #eee;}
-input{flex:1;padding:10px;border-radius:10px;border:1px solid #ccc;}
-
-.send{margin-left:8px;padding:10px 16px;background:#2563eb;color:#fff;border:none;border-radius:10px;}
-.voice{margin-left:8px;padding:10px;background:#22c55e;color:#fff;border:none;border-radius:10px;}
+/* input */
+.inputbar{display:flex;padding:10px;border-top:1px solid #eee;background:#fff}
+input{flex:1;padding:10px;border-radius:10px;border:1px solid #ccc}
+.send{margin-left:8px;padding:10px 16px;background:#2563eb;color:#fff;border:none;border-radius:10px}
+.voice{margin-left:8px;padding:10px;background:#22c55e;color:#fff;border:none;border-radius:10px}
 </style>
 </head>
 
@@ -49,13 +42,14 @@ input{flex:1;padding:10px;border-radius:10px;border:1px solid #ccc;}
 <div class="app">
 
   <div class="sidebar">
-    <button class="btn login" onclick="googleLogin()">Google Login</button>
+    <button class="btn login" onclick="loginGoogle()">Google Login</button>
     <button class="btn new" onclick="newChat()">+ New Chat</button>
     <button class="btn logout" onclick="logout()">Logout</button>
+    <p id="user"></p>
   </div>
 
   <div class="chat">
-    <div class="header">Model AI</div>
+    <div class="header">Model AI/div>
     <div id="messages" class="messages"></div>
 
     <div class="inputbar">
@@ -68,7 +62,7 @@ input{flex:1;padding:10px;border-radius:10px;border:1px solid #ccc;}
 </div>
 
 <script>
-/* 🔥 YOUR REAL FIREBASE CONFIG */
+/* 🔥 YOUR FIREBASE CONFIG (already correct) */
 const firebaseConfig = {
   apiKey: "AIzaSyDUcWSbU-ELP7Erx9yGPbq65clsn2ME8pk",
   authDomain: "model-ai-727b1.firebaseapp.com",
@@ -80,11 +74,34 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
 
-window.auth = firebase.auth();
-window.db = firebase.firestore();
+/* ===== LOGIN ===== */
+
+function loginGoogle(){
+  const provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider).catch(e=>alert(e.message));
+}
+
+function logout(){
+  auth.signOut();
+}
+
+auth.onAuthStateChanged(user=>{
+  document.getElementById("user").innerText =
+    user ? "👤 " + user.email : "Not logged in";
+});
+
+/* ===== VOICE ===== */
+
+function startVoice(){
+  const rec = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+  rec.lang = "en-US";
+  rec.start();
+  rec.onresult = e => input.value = e.results[0][0].transcript;
+}
 </script>
 
-<script src="chat.js"></script>
+<script src="/chat.js"></script>
 </body>
 </html>
