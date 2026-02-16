@@ -5,126 +5,66 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Model AI</title>
 
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
 <style>
-body{margin:0;font-family:Arial;background:#f9fafb;color:#000;display:flex;height:100vh}
+body{margin:0;font-family:Arial;background:#fff;}
+.app{display:flex;height:100vh;}
+.sidebar{width:220px;background:#f3f3f3;padding:20px;}
+.btn{width:100%;padding:12px;margin-bottom:10px;border:none;border-radius:10px;font-weight:bold;cursor:pointer;}
+.new{background:#22c55e;color:#fff;}
+.logout{background:#ef4444;color:#fff;}
+.login{background:#2563eb;color:#fff;}
 
-.sidebar{width:220px;background:#fff;border-right:1px solid #e5e7eb;padding:15px}
-.btn{padding:12px;border:none;border-radius:10px;font-weight:bold;cursor:pointer;width:100%;margin-bottom:10px}
-.login{background:#10b981;color:#fff}
-.logout{background:#ef4444;color:#fff}
+.chat{flex:1;display:flex;flex-direction:column;}
+.header{padding:15px;border-bottom:1px solid #eee;font-size:20px;font-weight:bold;}
+.messages{flex:1;overflow:auto;padding:20px;background:#fafafa;}
+.msg{max-width:70%;padding:10px 14px;border-radius:14px;margin-bottom:10px;}
+.user{background:#2563eb;color:#fff;margin-left:auto;}
+.bot{background:#e5e7eb;}
 
-.main{flex:1;display:flex;flex-direction:column}
-.header{padding:15px;border-bottom:1px solid #e5e7eb;font-weight:bold}
-.chat{flex:1;overflow:auto;padding:20px;display:flex;flex-direction:column;gap:12px}
-
-.msg{max-width:70%;padding:12px;border-radius:12px}
-.user{background:#2563eb;color:#fff;margin-left:auto}
-.bot{background:#e5e7eb}
-
-.input{display:flex;padding:10px;border-top:1px solid #e5e7eb;gap:8px;background:#fff}
-input{flex:1;padding:12px;border-radius:10px;border:1px solid #ccc}
-.send{background:#2563eb;color:#fff;border:none;padding:12px;border-radius:10px}
-.icon{background:#e5e7eb;border:none;padding:10px;border-radius:10px}
+.inputbar{display:flex;padding:10px;border-top:1px solid #eee;}
+input{flex:1;padding:10px;border-radius:10px;border:1px solid #ccc;}
+.send{margin-left:8px;padding:10px 16px;background:#2563eb;color:#fff;border:none;border-radius:10px;}
+.voice{margin-left:8px;padding:10px;background:#22c55e;color:#fff;border:none;border-radius:10px;}
 </style>
 </head>
 
 <body>
 
-<div class="sidebar">
-<button class="btn login" onclick="login()">Login with Google</button>
-<button class="btn logout" onclick="logout()">Logout</button>
-<p id="user"></p>
-</div>
+<div class="app">
+  <div class="sidebar">
+    <button class="btn login" onclick="googleLogin()">Google Login</button>
+    <button class="btn new" onclick="newChat()">+ New Chat</button>
+    <button class="btn logout" onclick="logout()">Logout</button>
+  </div>
 
-<div class="main">
-<div class="header">Model AI Assistant</div>
-<div id="chat" class="chat"></div>
+  <div class="chat">
+    <div class="header">Model AI Assistant</div>
+    <div id="messages" class="messages"></div>
 
-<div class="input">
-<button class="icon" onclick="voice()">🎤</button>
-<button class="icon" onclick="askImage()">🖼️</button>
-<input id="msg" placeholder="Type message...">
-<button class="send" onclick="send()">Send</button>
-</div>
+    <div class="inputbar">
+      <input id="input" placeholder="Type message..." />
+      <button class="voice" onclick="startVoice()">🎤</button>
+      <button class="send" onclick="sendMsg()">Send</button>
+    </div>
+  </div>
 </div>
 
 <script>
-/* FIREBASE CONFIG — paste yours */
-firebase.initializeApp({
-  apiKey:"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",
-  authDomain:"modelai.online",
-  projectId:"model-ai-727b1"
-});
+const firebaseConfig = {
+  apiKey: "YOUR_FIREBASE_KEY",
+  authDomain: "YOUR_DOMAIN.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+};
 
-const auth=firebase.auth();
-const chat=document.getElementById("chat");
-
-/* LOGIN */
-function login(){
-  auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
-}
-function logout(){ auth.signOut(); }
-
-auth.onAuthStateChanged(u=>{
-  document.getElementById("user").innerText = u ? u.email : "";
-});
-
-/* ADD MESSAGE */
-function add(text,type,isImg=false){
-  const el=document.createElement(isImg?"img":"div");
-  if(isImg){ el.src=text; el.style.maxWidth="200px"; }
-  else{ el.className="msg "+type; el.textContent=text; }
-  chat.appendChild(el);
-  chat.scrollTop=chat.scrollHeight;
-}
-
-/* SEND */
-async function send(){
-  const input=document.getElementById("msg");
-  const text=input.value.trim();
-  if(!text) return;
-
-  add(text,"user");
-  input.value="";
-
-  const res=await fetch("/api/chat",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({message:text})
-  });
-
-  const data=await res.json();
-
-  if(data.image){
-    add(data.image,"bot",true);
-  }else{
-    add(data.reply,"bot");
-    speak(data.reply);
-  }
-}
-
-/* VOICE INPUT */
-function voice(){
-  const r=new(window.SpeechRecognition||window.webkitSpeechRecognition)();
-  r.start();
-  r.onresult=e=>msg.value=e.results[0][0].transcript;
-}
-
-/* VOICE REPLY */
-function speak(t){
-  speechSynthesis.speak(new SpeechSynthesisUtterance(t));
-}
-
-/* IMAGE PROMPT */
-function askImage(){
-  const p=prompt("Enter image description");
-  if(p) msg.value="image: "+p;
-}
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
 </script>
 
+<script src="chat.js"></script>
 </body>
 </html>
