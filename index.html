@@ -10,11 +10,35 @@ body{margin:0;font-family:Arial;background:#f7f7f8}
 .app{display:flex;height:100vh}
 
 /* sidebar */
-.sidebar{width:230px;background:#fff;border-right:1px solid #e5e7eb;padding:20px}
-.btn{width:100%;padding:12px;margin-bottom:10px;border:none;border-radius:10px;font-weight:bold;cursor:pointer}
+.sidebar{
+  width:230px;
+  background:#fff;
+  border-right:1px solid #e5e7eb;
+  padding:20px;
+}
+
+.btn{
+  width:100%;
+  padding:12px;
+  margin-bottom:10px;
+  border:none;
+  border-radius:10px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
 .login{background:#2563eb;color:#fff}
 .logout{background:#ef4444;color:#fff}
 .new{background:#22c55e;color:#fff}
+
+/* sidebar links */
+.links a{
+  display:block;
+  margin-top:12px;
+  color:#2563eb;
+  text-decoration:none;
+  font-weight:bold;
+}
 
 /* chat */
 .chat{flex:1;display:flex;flex-direction:column}
@@ -41,13 +65,25 @@ input{flex:1;padding:12px;border-radius:12px;border:1px solid #ccc}
 
 <div class="app">
 
+  <!-- SIDEBAR -->
   <div class="sidebar">
     <button class="btn login" onclick="login()">Google Login</button>
     <button class="btn new" onclick="newChat()">+ New Chat</button>
     <button class="btn logout" onclick="logout()">Logout</button>
+
     <p id="user">Not logged in</p>
+
+    <!-- LEGAL LINKS -->
+    <div class="links">
+      <a href="/about.html">About</a>
+      <a href="/contact.html">Contact</a>
+      <a href="/privacy-policy.html">Privacy Policy</a>
+      <a href="/terms.html">Terms</a>
+      <a href="/sitemap.html">Sitemap</a>
+    </div>
   </div>
 
+  <!-- CHAT -->
   <div class="chat">
     <div class="header">Model AI Assistant</div>
 
@@ -73,7 +109,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 
-/* Google login */
+/* login */
 function login(){
   const provider = new firebase.auth.GoogleAuthProvider();
   auth.signInWithPopup(provider).catch(e=>alert(e.message));
