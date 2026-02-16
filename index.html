@@ -1,9 +1,69 @@
-<!-- Firebase SDK (Google Login kosam) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Model AI</title>
+
+<style>
+body{margin:0;font-family:Arial;background:#f7f7f8}
+.app{display:flex;height:100vh}
+
+/* sidebar */
+.sidebar{width:230px;background:#fff;border-right:1px solid #e5e7eb;padding:20px}
+.btn{width:100%;padding:12px;margin-bottom:10px;border:none;border-radius:10px;font-weight:bold;cursor:pointer}
+.login{background:#2563eb;color:#fff}
+.logout{background:#ef4444;color:#fff}
+.new{background:#22c55e;color:#fff}
+
+/* chat */
+.chat{flex:1;display:flex;flex-direction:column}
+.header{padding:16px;border-bottom:1px solid #e5e7eb;font-weight:bold;background:#fff}
+.messages{flex:1;overflow:auto;padding:20px}
+
+.msg{max-width:70%;padding:12px;border-radius:14px;margin-bottom:10px}
+.user{background:#2563eb;color:#fff;margin-left:auto}
+.bot{background:#e5e7eb}
+
+/* bottom bar */
+.inputbar{display:flex;padding:12px;border-top:1px solid #e5e7eb;background:#fff}
+input{flex:1;padding:12px;border-radius:12px;border:1px solid #ccc}
+.send{margin-left:8px;padding:12px 18px;background:#2563eb;color:#fff;border:none;border-radius:12px;cursor:pointer}
+.voice{margin-left:8px;padding:12px;background:#22c55e;color:#fff;border:none;border-radius:12px;cursor:pointer}
+</style>
+
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+</head>
+
+<body>
+
+<div class="app">
+
+  <div class="sidebar">
+    <button class="btn login" onclick="login()">Google Login</button>
+    <button class="btn new" onclick="newChat()">+ New Chat</button>
+    <button class="btn logout" onclick="logout()">Logout</button>
+    <p id="user">Not logged in</p>
+  </div>
+
+  <div class="chat">
+    <div class="header">Model AI Assistant</div>
+
+    <div id="messages" class="messages"></div>
+
+    <div class="inputbar">
+      <input id="input" placeholder="Type message..." />
+      <button class="voice" onclick="startVoice()">🎤</button>
+      <button class="send" onclick="sendMsg()">Send</button>
+    </div>
+  </div>
+
+</div>
 
 <script>
-/* ===== Firebase Config ===== */
+/* Firebase config */
 const firebaseConfig = {
   apiKey: "AIzaSyDUcWSbU-ELP7Erx9yGPbq65clsn2ME8pk",
   authDomain: "model-ai-727b1.firebaseapp.com",
@@ -13,30 +73,24 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 
-/* ===== GOOGLE LOGIN ===== */
+/* Google login */
 function login(){
   const provider = new firebase.auth.GoogleAuthProvider();
-
-  auth.signInWithPopup(provider)
-    .then(result => {
-      const user = result.user;
-      document.getElementById("user").innerText = "👤 " + user.email;
-    })
-    .catch(err => alert(err.message));
+  auth.signInWithPopup(provider).catch(e=>alert(e.message));
 }
 
-/* ===== LOGOUT ===== */
+/* logout */
 function logout(){
   auth.signOut();
-  document.getElementById("user").innerText = "Not logged in";
 }
 
-/* ===== AUTO LOGIN STATE ===== */
+/* show user */
 auth.onAuthStateChanged(user=>{
   document.getElementById("user").innerText =
     user ? "👤 " + user.email : "Not logged in";
 });
 </script>
 
-<!-- Chat script already correct -->
 <script src="/chat.js"></script>
+</body>
+</html>
