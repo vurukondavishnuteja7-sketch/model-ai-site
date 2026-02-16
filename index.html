@@ -5,23 +5,29 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Model AI</title>
 
-<!-- ✅ ADSENSE CODE ADDED -->
+<!-- Adsense -->
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8731009230578197"
-     crossorigin="anonymous"></script>
+crossorigin="anonymous"></script>
 
 <style>
 body{margin:0;font-family:Arial;background:#f7f7f8}
+
+/* layout */
 .app{display:flex;height:100vh}
 
 /* sidebar */
 .sidebar{
-  width:240px;
+  width:260px;
+  min-width:180px;
+  max-width:400px;
   background:#fff;
   border-right:1px solid #e5e7eb;
   padding:20px;
-  overflow-y:auto;
+  overflow:auto;
+  resize:horizontal; /* adjustable */
 }
 
+/* buttons */
 .btn{
   width:100%;
   padding:12px;
@@ -31,37 +37,65 @@ body{margin:0;font-family:Arial;background:#f7f7f8}
   font-weight:bold;
   cursor:pointer;
 }
-
 .login{background:#2563eb;color:#fff}
 .logout{background:#ef4444;color:#fff}
 .new{background:#22c55e;color:#fff}
 
-/* sidebar links */
+/* links */
 .links a{
   display:block;
   margin-top:10px;
   color:#2563eb;
   text-decoration:none;
   font-weight:bold;
-  font-size:14px;
+}
+
+/* main */
+.main{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  overflow:auto;
+}
+
+/* blog + ai same width */
+.container{
+  width:100%;
+  max-width:900px;
+  margin:20px;
+}
+
+/* search bar */
+.search{
+  width:100%;
+  padding:16px;
+  border-radius:14px;
+  border:1px solid #ccc;
+  font-size:16px;
+  margin-bottom:20px;
+}
+
+/* card */
+.card{
+  background:#fff;
+  padding:20px;
+  border-radius:14px;
+  box-shadow:0 2px 8px rgba(0,0,0,.05);
+  margin-bottom:20px;
 }
 
 /* chat */
-.chat{flex:1;display:flex;flex-direction:column}
-.header{padding:16px;border-bottom:1px solid #e5e7eb;font-weight:bold;background:#fff}
-.messages{flex:1;overflow:auto;padding:20px}
-
+.messages{height:300px;overflow:auto;margin:15px 0}
 .msg{max-width:70%;padding:12px;border-radius:14px;margin-bottom:10px}
 .user{background:#2563eb;color:#fff;margin-left:auto}
 .bot{background:#e5e7eb}
 
-/* bottom bar */
-.inputbar{display:flex;padding:12px;border-top:1px solid #e5e7eb;background:#fff}
+/* input bar */
+.inputbar{display:flex}
 input{flex:1;padding:12px;border-radius:12px;border:1px solid #ccc}
 .send{margin-left:8px;padding:12px 18px;background:#2563eb;color:#fff;border:none;border-radius:12px;cursor:pointer}
 .voice{margin-left:8px;padding:12px;background:#22c55e;color:#fff;border:none;border-radius:12px;cursor:pointer}
-
-h4{margin-top:18px;margin-bottom:6px}
 </style>
 
 <!-- Firebase -->
@@ -73,79 +107,90 @@ h4{margin-top:18px;margin-bottom:6px}
 
 <div class="app">
 
-  <!-- SIDEBAR -->
-  <div class="sidebar">
+<!-- SIDEBAR -->
+<div class="sidebar">
 
-    <button class="btn login" onclick="login()">Google Login</button>
-    <button class="btn new" onclick="newChat()">+ New Chat</button>
-    <button class="btn logout" onclick="logout()">Logout</button>
+<button class="btn login" onclick="login()">Google Login</button>
+<button class="btn new" onclick="newChat()">+ New Chat</button>
+<button class="btn logout" onclick="logout()">Logout</button>
 
-    <p id="user">Not logged in</p>
+<p id="user">Not logged in</p>
 
-    <!-- LEGAL LINKS -->
-    <h4>Pages</h4>
-    <div class="links">
-      <a href="/about.html">About</a>
-      <a href="/contact.html">Contact</a>
-      <a href="/privacy-policy.html">Privacy Policy</a>
-      <a href="/terms.html">Terms</a>
-      <a href="/sitemap.html">Sitemap</a>
-    </div>
+<h4>Pages</h4>
+<div class="links">
+<a href="/about.html">About</a>
+<a href="/contact.html">Contact</a>
+<a href="/privacy-policy.html">Privacy Policy</a>
+<a href="/terms.html">Terms</a>
+<a href="/sitemap.html">Sitemap</a>
+</div>
 
-    <!-- BLOG LINKS -->
-    <h4>Blogs</h4>
-    <div class="links">
-      <a href="/blog1.html">Best AI Tools for Students</a>
-      <a href="/blog2.html">AI for Homework</a>
-      <a href="/blog3.html">ChatGPT Alternatives</a>
-      <a href="/blog4.html">AI Image Generator Guide</a>
-      <a href="/blog5.html">AI Coding for Beginners</a>
-      <a href="/blog6.html">Benefits of AI in Education</a>
-      <a href="/blog7.html">Future of AI in Daily Life</a>
-      <a href="/blog8.html">AI Tools to Earn Money</a>
-      <a href="/blog9.html">AI vs Human Intelligence</a>
-      <a href="/blog10.html">Top Productivity AI Apps</a>
-    </div>
-
-  </div>
-
-  <!-- CHAT -->
-  <div class="chat">
-    <div class="header">Model AI Assistant</div>
-
-    <div id="messages" class="messages"></div>
-
-    <div class="inputbar">
-      <input id="input" placeholder="Type message..." />
-      <button class="voice" onclick="startVoice()">🎤</button>
-      <button class="send" onclick="sendMsg()">Send</button>
-    </div>
-  </div>
+<h4>Blogs</h4>
+<div class="links">
+<a href="/blog1.html">Best AI Tools</a>
+<a href="/blog2.html">AI Homework</a>
+<a href="/blog3.html">ChatGPT Alternatives</a>
+</div>
 
 </div>
 
+<!-- MAIN -->
+<div class="main">
+
+<div class="container">
+
+<!-- SEARCH -->
+<input class="search" placeholder="Search AI tools, blogs, questions..." />
+
+<!-- BLOG CARD -->
+<div class="card">
+<h2>Welcome to Model AI</h2>
+<p>
+Free AI assistant for students, coding, and productivity.
+Scroll down to use AI chat.
+</p>
+</div>
+
+<!-- AI CHAT -->
+<div class="card">
+
+<div id="messages" class="messages"></div>
+
+<div class="inputbar">
+<input id="input" placeholder="Type message..." />
+<button class="voice" onclick="startVoice()">🎤</button>
+<button class="send" onclick="sendMsg()">Send</button>
+</div>
+
+</div>
+
+</div>
+</div>
+</div>
+
 <script>
-const firebaseConfig = {
-  apiKey: "AIzaSyDUcWSbU-ELP7Erx9yGPbq65clsn2ME8pk",
-  authDomain: "model-ai-727b1.firebaseapp.com",
-  projectId: "model-ai-727b1",
+/* Firebase */
+const firebaseConfig={
+apiKey:"AIzaSyDUcWSbU-ELP7Erx9yGPbq65clsn2ME8pk",
+authDomain:"model-ai-727b1.firebaseapp.com",
+projectId:"model-ai-727b1"
 };
-
 firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
+const auth=firebase.auth();
 
+/* login */
 function login(){
-  const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider).catch(e=>alert(e.message));
+const provider=new firebase.auth.GoogleAuthProvider();
+auth.signInWithPopup(provider).catch(e=>alert(e.message));
 }
 
-function logout(){
-  auth.signOut();
-}
+/* logout */
+function logout(){auth.signOut();}
 
+/* show user */
 auth.onAuthStateChanged(user=>{
-  document.getElementById("user").innerText =
-    user ? "👤 " + user.email : "Not logged in";
+document.getElementById("user").innerText=
+user?"👤 "+user.email:"Not logged in";
 });
 </script>
 
