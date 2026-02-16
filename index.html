@@ -1,182 +1,165 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Model AI Assistant</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Model AI GOD</title>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
 <style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:Segoe UI, sans-serif;
-}
+body{margin:0;font-family:Arial;background:#0b1020;color:#fff;display:flex;height:100vh}
+.sidebar{width:240px;background:#020617;padding:15px;display:flex;flex-direction:column;gap:10px}
+.btn{padding:12px;border:none;border-radius:10px;font-weight:bold;cursor:pointer}
+.new{background:#22c55e;color:#000}
+.theme{background:#3b82f6}
+.logout{background:#ef4444}
 
-body{
-  height:100vh;
-  display:flex;
-  background:linear-gradient(135deg,#0f172a,#020617);
-  color:white;
-}
+.main{flex:1;display:flex;flex-direction:column}
+.header{padding:15px;border-bottom:1px solid #1e293b;font-size:18px}
+.chat{flex:1;overflow:auto;padding:20px;display:flex;flex-direction:column;gap:12px}
+.msg{max-width:70%;padding:12px;border-radius:12px}
+.user{background:#22c55e;color:#000;margin-left:auto}
+.bot{background:#1e293b}
 
-/* Sidebar */
-.sidebar{
-  width:230px;
-  background:#020617;
-  padding:20px;
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-}
+.input{display:flex;padding:10px;border-top:1px solid #1e293b;gap:8px}
+input{flex:1;padding:12px;border-radius:10px;border:none}
+.send{background:#22c55e;border:none;padding:12px;border-radius:10px}
+.icon{background:#334155;color:#fff;border:none;padding:10px;border-radius:10px}
 
-.btn{
-  padding:14px;
-  border:none;
-  border-radius:12px;
-  font-size:15px;
-  cursor:pointer;
-  font-weight:600;
-}
-
-.newchat{background:#22c55e;color:white;}
-.logout{background:#ef4444;color:white;}
-
-/* Chat area */
-.chatbox{
-  flex:1;
-  display:flex;
-  flex-direction:column;
-}
-
-.header{
-  padding:18px;
-  border-bottom:1px solid #1e293b;
-  font-size:20px;
-  font-weight:bold;
-}
-
-/* Messages */
-.messages{
-  flex:1;
-  overflow:auto;
-  padding:20px;
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-}
-
-.msg{
-  max-width:70%;
-  padding:14px 18px;
-  border-radius:16px;
-  font-size:15px;
-  line-height:1.4;
-}
-
-.user{
-  background:#22c55e;
-  align-self:flex-end;
-}
-
-.bot{
-  background:#1e293b;
-  align-self:flex-start;
-}
-
-/* Input */
-.inputbox{
-  padding:14px;
-  border-top:1px solid #1e293b;
-  display:flex;
-  gap:10px;
-}
-
-.inputbox input{
-  flex:1;
-  padding:14px;
-  border-radius:12px;
-  border:none;
-  outline:none;
-  font-size:15px;
-}
-
-.send{
-  background:#22c55e;
-  color:white;
-  border:none;
-  padding:14px 20px;
-  border-radius:12px;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-/* Mobile */
-@media(max-width:700px){
-  .sidebar{display:none;}
-}
+.light{background:#f1f5f9;color:#000}
+.light .sidebar{background:#fff}
+.light .bot{background:#e2e8f0}
 </style>
 </head>
 
 <body>
 
-<!-- Sidebar -->
 <div class="sidebar">
-  <button class="btn newchat" onclick="newChat()">+ New Chat</button>
-  <button class="btn logout">Logout</button>
+<button class="btn new" onclick="newChat()">+ New</button>
+<button class="btn theme" onclick="toggleTheme()">Theme</button>
+<button class="btn logout" onclick="logout()">Logout</button>
+<div id="user"></div>
 </div>
 
-<!-- Chat -->
-<div class="chatbox">
-  <div class="header">Model AI Assistant</div>
+<div class="main">
+<div class="header">
+Model AI GOD
+<select id="model">
+<option value="openai/gpt-3.5-turbo">GPT-3.5</option>
+<option value="openai/gpt-4">GPT-4</option>
+</select>
+</div>
 
-  <div class="messages" id="messages"></div>
+<div id="chat" class="chat"></div>
 
-  <div class="inputbox">
-    <input id="input" placeholder="Send a message...">
-    <button class="send" onclick="sendMsg()">Send</button>
-  </div>
+<div class="input">
+<button class="icon" onclick="voice()">🎤</button>
+<button class="icon" onclick="imagePrompt()">🖼️</button>
+<input id="msg" placeholder="Type message...">
+<button class="send" onclick="send()">Send</button>
+</div>
 </div>
 
 <script>
-async function sendMsg(){
-  const input = document.getElementById("input");
-  const text = input.value.trim();
+/* 🔥 FIREBASE CONFIG — paste yours here */
+const firebaseConfig = {
+  apiKey: "YOUR_KEY",
+  authDomain: "YOUR_DOMAIN",
+  projectId: "YOUR_ID"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+/* ===== LOGIN ===== */
+auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+
+auth.onAuthStateChanged(user=>{
+  if(!user) return;
+  document.getElementById("user").innerText = user.email;
+  loadChats(user.uid);
+});
+
+/* ===== ADD MESSAGE ===== */
+function add(text,type,isImg=false){
+  const d=document.createElement(isImg?"img":"div");
+  if(isImg){
+    d.src=text;
+    d.style.maxWidth="200px";
+  }else{
+    d.className="msg "+type;
+    d.textContent=text;
+  }
+  chat.appendChild(d);
+  chat.scrollTop=chat.scrollHeight;
+}
+
+/* ===== SEND ===== */
+async function send(){
+  const text=msg.value.trim();
   if(!text) return;
 
-  addMsg(text,"user");
-  input.value="";
+  add(text,"user");
+  msg.value="";
 
-  addMsg("Typing...","bot");
+  const res=await fetch("/api/chat",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({message:text,model:model.value})
+  });
 
-  try{
-    const res = await fetch("/api/chat",{
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body:JSON.stringify({message:text})
-    });
+  const data=await res.json();
 
-    const data = await res.json();
-
-    document.querySelector(".messages .bot:last-child").remove();
-    addMsg(data.reply || "AI error","bot");
-
-  }catch(e){
-    document.querySelector(".messages .bot:last-child").remove();
-    addMsg("Server error","bot");
+  if(data.image) add(data.image,"bot",true);
+  else{
+    add(data.reply,"bot");
+    speak(data.reply);
+    saveChat(text,data.reply);
   }
 }
 
-function addMsg(text,type){
-  const div=document.createElement("div");
-  div.className="msg "+type;
-  div.textContent=text;
-  document.getElementById("messages").appendChild(div);
+/* ===== FIRESTORE SAVE ===== */
+async function saveChat(q,a){
+  const u=auth.currentUser;
+  if(!u) return;
+
+  await db.collection("chats").add({
+    uid:u.uid, q, a, time:Date.now()
+  });
 }
 
-function newChat(){
-  document.getElementById("messages").innerHTML="";
+/* ===== LOAD HISTORY ===== */
+async function loadChats(uid){
+  const snap=await db.collection("chats")
+    .where("uid","==",uid).orderBy("time").get();
+
+  snap.forEach(d=>{
+    add(d.data().q,"user");
+    add(d.data().a,"bot");
+  });
 }
+
+/* ===== VOICE ===== */
+function voice(){
+  const r=new(window.SpeechRecognition||window.webkitSpeechRecognition)();
+  r.start();
+  r.onresult=e=>msg.value=e.results[0][0].transcript;
+}
+
+function speak(t){ speechSynthesis.speak(new SpeechSynthesisUtterance(t)); }
+
+function imagePrompt(){
+  const p=prompt("Image description");
+  if(p) msg.value="image:"+p;
+}
+
+function newChat(){ chat.innerHTML=""; }
+function toggleTheme(){ document.body.classList.toggle("light"); }
+function logout(){ auth.signOut(); }
 </script>
 
 </body>
