@@ -4,13 +4,10 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { message, model } = req.body;
+    const { message } = req.body;
+    if (!message) return res.status(400).json({ error: "Message required" });
 
-    if (!message) {
-      return res.status(400).json({ error: "Message required" });
-    }
-
-    // ===== IMAGE GENERATION =====
+    // IMAGE
     if (message.toLowerCase().startsWith("image:")) {
       const prompt = message.replace("image:", "").trim();
 
@@ -27,12 +24,10 @@ export default async function handler(req, res) {
       });
 
       const imgData = await img.json();
-      const url = imgData?.data?.[0]?.url;
-
-      return res.status(200).json({ image: url || null });
+      return res.status(200).json({ image: imgData?.data?.[0]?.url });
     }
 
-    // ===== NORMAL CHAT =====
+    // CHAT
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -40,18 +35,15 @@ export default async function handler(req, res) {
         Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
       },
       body: JSON.stringify({
-        model: model || "openai/gpt-3.5-turbo",
+        model: "openai/gpt-3.5-turbo",
         messages: [{ role: "user", content: message }],
       }),
     });
 
     const data = await response.json();
-    const reply = data?.choices?.[0]?.message?.content || "No AI reply";
+    res.status(200).json({ reply: data?.choices?.[0]?.message?.content });
 
-    res.status(200).json({ reply });
-
-  } catch (err) {
-    console.error(err);
+  } catch {
     res.status(500).json({ error: "Server error" });
   }
 }
