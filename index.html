@@ -1,62 +1,76 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Model AI GOD</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<title>Model AI – Free AI Chat, Image Generator & Voice Assistant</title>
+
+<meta name="description"
+content="Model AI is a free AI chatbot with image generation, voice assistant, and powerful AI tools for students and developers.">
+
+<meta name="keywords"
+content="AI chatbot, free AI, image generator, voice AI, ChatGPT alternative, Model AI">
+
+<!-- Google verification (replace later) -->
+<meta name="google-site-verification" content="PASTE_YOUR_CODE_HERE">
 
 <style>
-body{margin:0;font-family:Arial;background:#0b1020;color:#fff;display:flex;height:100vh}
-.sidebar{width:240px;background:#020617;padding:15px;display:flex;flex-direction:column;gap:10px}
+body{margin:0;font-family:Arial;background:#f9fafb;color:#000;display:flex;height:100vh}
+
+.sidebar{
+width:230px;background:#ffffff;border-right:1px solid #e5e7eb;
+padding:15px;display:flex;flex-direction:column;gap:10px
+}
+
 .btn{padding:12px;border:none;border-radius:10px;font-weight:bold;cursor:pointer}
-.new{background:#22c55e;color:#000}
-.theme{background:#3b82f6}
-.logout{background:#ef4444}
+.new{background:#2563eb;color:#fff}
+.logout{background:#ef4444;color:#fff}
 
 .main{flex:1;display:flex;flex-direction:column}
-.header{padding:15px;border-bottom:1px solid #1e293b;font-size:18px}
+
+.header{
+padding:15px;border-bottom:1px solid #e5e7eb;
+font-size:18px;font-weight:bold;background:#ffffff
+}
+
 .chat{flex:1;overflow:auto;padding:20px;display:flex;flex-direction:column;gap:12px}
+
 .msg{max-width:70%;padding:12px;border-radius:12px}
-.user{background:#22c55e;color:#000;margin-left:auto}
-.bot{background:#1e293b}
+.user{background:#2563eb;color:#fff;margin-left:auto}
+.bot{background:#e5e7eb}
 
-.input{display:flex;padding:10px;border-top:1px solid #1e293b;gap:8px}
-input{flex:1;padding:12px;border-radius:10px;border:none}
-.send{background:#22c55e;border:none;padding:12px;border-radius:10px}
-.icon{background:#334155;color:#fff;border:none;padding:10px;border-radius:10px}
+.input{display:flex;padding:10px;border-top:1px solid #e5e7eb;gap:8px;background:#fff}
+input{flex:1;padding:12px;border-radius:10px;border:1px solid #d1d5db}
+.send{background:#2563eb;color:#fff;border:none;padding:12px;border-radius:10px}
+.icon{background:#e5e7eb;border:none;padding:10px;border-radius:10px}
 
-.light{background:#f1f5f9;color:#000}
-.light .sidebar{background:#fff}
-.light .bot{background:#e2e8f0}
+.links a{font-size:14px;color:#2563eb;text-decoration:none;margin-top:4px}
 </style>
 </head>
 
 <body>
 
 <div class="sidebar">
-<button class="btn new" onclick="newChat()">+ New</button>
-<button class="btn theme" onclick="toggleTheme()">Theme</button>
-<button class="btn logout" onclick="logout()">Logout</button>
-<div id="user"></div>
+<button class="btn new" onclick="newChat()">+ New Chat</button>
+<button class="btn logout">Logout</button>
+
+<hr>
+
+<div class="links">
+<a href="/privacy-policy.html">Privacy Policy</a><br>
+<a href="/terms.html">Terms</a><br>
+<a href="/about.html">About</a><br>
+<a href="/contact.html">Contact</a>
+</div>
 </div>
 
 <div class="main">
-<div class="header">
-Model AI GOD
-<select id="model">
-<option value="openai/gpt-3.5-turbo">GPT-3.5</option>
-<option value="openai/gpt-4">GPT-4</option>
-</select>
-</div>
+<div class="header">Model AI Assistant</div>
 
 <div id="chat" class="chat"></div>
 
 <div class="input">
-<button class="icon" onclick="voice()">🎤</button>
 <button class="icon" onclick="imagePrompt()">🖼️</button>
 <input id="msg" placeholder="Type message...">
 <button class="send" onclick="send()">Send</button>
@@ -64,102 +78,37 @@ Model AI GOD
 </div>
 
 <script>
-/* 🔥 FIREBASE CONFIG — paste yours here */
-const firebaseConfig = {
-  apiKey: "YOUR_KEY",
-  authDomain: "YOUR_DOMAIN",
-  projectId: "YOUR_ID"
-};
+function add(text,type,isImg=false){
+const d=document.createElement(isImg?"img":"div");
+if(isImg){d.src=text;d.style.maxWidth="200px"}
+else{d.className="msg "+type;d.textContent=text}
+chat.appendChild(d);chat.scrollTop=chat.scrollHeight;
+}
 
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
+async function send(){
+const text=msg.value.trim();
+if(!text) return;
 
-/* ===== LOGIN ===== */
-auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+add(text,"user"); msg.value="";
 
-auth.onAuthStateChanged(user=>{
-  if(!user) return;
-  document.getElementById("user").innerText = user.email;
-  loadChats(user.uid);
+const res=await fetch("/api/chat",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({message:text})
 });
 
-/* ===== ADD MESSAGE ===== */
-function add(text,type,isImg=false){
-  const d=document.createElement(isImg?"img":"div");
-  if(isImg){
-    d.src=text;
-    d.style.maxWidth="200px";
-  }else{
-    d.className="msg "+type;
-    d.textContent=text;
-  }
-  chat.appendChild(d);
-  chat.scrollTop=chat.scrollHeight;
+const data=await res.json();
+
+if(data.image) add(data.image,"bot",true);
+else add(data.reply,"bot");
 }
 
-/* ===== SEND ===== */
-async function send(){
-  const text=msg.value.trim();
-  if(!text) return;
-
-  add(text,"user");
-  msg.value="";
-
-  const res=await fetch("/api/chat",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({message:text,model:model.value})
-  });
-
-  const data=await res.json();
-
-  if(data.image) add(data.image,"bot",true);
-  else{
-    add(data.reply,"bot");
-    speak(data.reply);
-    saveChat(text,data.reply);
-  }
-}
-
-/* ===== FIRESTORE SAVE ===== */
-async function saveChat(q,a){
-  const u=auth.currentUser;
-  if(!u) return;
-
-  await db.collection("chats").add({
-    uid:u.uid, q, a, time:Date.now()
-  });
-}
-
-/* ===== LOAD HISTORY ===== */
-async function loadChats(uid){
-  const snap=await db.collection("chats")
-    .where("uid","==",uid).orderBy("time").get();
-
-  snap.forEach(d=>{
-    add(d.data().q,"user");
-    add(d.data().a,"bot");
-  });
-}
-
-/* ===== VOICE ===== */
-function voice(){
-  const r=new(window.SpeechRecognition||window.webkitSpeechRecognition)();
-  r.start();
-  r.onresult=e=>msg.value=e.results[0][0].transcript;
-}
-
-function speak(t){ speechSynthesis.speak(new SpeechSynthesisUtterance(t)); }
+function newChat(){chat.innerHTML=""}
 
 function imagePrompt(){
-  const p=prompt("Image description");
-  if(p) msg.value="image:"+p;
+const p=prompt("Enter image description");
+if(p) msg.value="image:"+p;
 }
-
-function newChat(){ chat.innerHTML=""; }
-function toggleTheme(){ document.body.classList.toggle("light"); }
-function logout(){ auth.signOut(); }
 </script>
 
 </body>
