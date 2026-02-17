@@ -13,73 +13,39 @@ crossorigin="anonymous"></script>
 body{margin:0;font-family:Arial;background:#f5f7fb}
 .app{display:flex;min-height:100vh}
 
-/* header */
-.header{
-text-align:center;
-padding:25px 10px;
-font-size:32px;
-font-weight:bold;
-color:#2563eb;
-background:#fff;
-border-bottom:1px solid #e5e7eb
-}
+.header{text-align:center;padding:25px 10px;font-size:32px;font-weight:bold;color:#2563eb;background:#fff;border-bottom:1px solid #e5e7eb}
 
-/* MENU */
-.menuBtn{
-position:fixed;top:15px;left:15px;z-index:1001;
-background:#2563eb;color:#fff;border:none;
-padding:10px 14px;border-radius:8px;cursor:pointer;
-}
+.menuBtn{position:fixed;top:15px;left:15px;z-index:1001;background:#2563eb;color:#fff;border:none;padding:10px 14px;border-radius:8px;cursor:pointer;}
 
-/* SIDEBAR */
-.sidebar{
-width:240px;background:#fff;border-right:1px solid #e5e7eb;
-padding:20px;overflow-y:auto;position:fixed;
-top:0;left:0;height:100vh;z-index:1000;
-transform:translateX(-100%);transition:.3s;
-}
+.sidebar{width:240px;background:#fff;border-right:1px solid #e5e7eb;padding:20px;overflow-y:auto;position:fixed;top:0;left:0;height:100vh;z-index:1000;transform:translateX(-100%);transition:.3s;}
 .sidebar.show{transform:translateX(0)}
 
-/* OVERLAY */
-.overlay{
-position:fixed;top:0;left:0;width:100%;height:100%;
-background:rgba(0,0,0,.4);z-index:999;display:none;
-}
+.overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.4);z-index:999;display:none;}
 .overlay.show{display:block}
 
-/* buttons */
 .btn{width:100%;padding:12px;margin-bottom:10px;border:none;border-radius:10px;font-weight:bold;cursor:pointer}
 .login{background:#2563eb;color:#fff}
 .new{background:#22c55e;color:#fff}
 .logout{background:#ef4444;color:#fff}
 
-/* main */
 .main{flex:1;padding:20px}
 .container{max-width:950px;margin:auto}
 
-/* card */
-.card{
-background:#fff;padding:20px;border-radius:14px;
-box-shadow:0 2px 8px rgba(0,0,0,.05);margin-bottom:25px
-}
+.card{background:#fff;padding:20px;border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,.05);margin-bottom:25px}
 
-/* blog image */
 .blog-img{width:100%;border-radius:12px;margin-bottom:12px}
 .blog-text{line-height:1.8;color:#333}
 
-/* chat */
 .messages{height:320px;overflow:auto;margin:15px 0}
 .msg{max-width:80%;padding:12px;border-radius:12px;margin-bottom:10px}
 .user{background:#2563eb;color:#fff;margin-left:auto}
 .bot{background:#e5e7eb}
 
-/* input */
 .inputbar{display:flex;gap:8px}
 #input{flex:1;padding:12px;border-radius:12px;border:1px solid #ccc}
 .send{background:#2563eb;color:#fff;border:none;border-radius:12px;padding:12px 16px;cursor:pointer}
 .voice{background:#22c55e;color:#fff;border:none;border-radius:12px;padding:12px 16px;cursor:pointer}
 
-/* footer */
 .footer{text-align:center;padding:30px;background:#fff;border-top:1px solid #e5e7eb;margin-top:40px;font-size:14px}
 </style>
 
@@ -110,7 +76,7 @@ box-shadow:0 2px 8px rgba(0,0,0,.05);margin-bottom:25px
 
 <div class="header">Model AI</div>
 
-<!-- ⭐ 10 FULL BLOGS -->
+<!-- BLOGS -->
 <script>
 const blogData = Array.from({length:10}, (_,i)=>({
 title:[
@@ -118,51 +84,21 @@ title:[
 "AI Coding Guide","Future of AI","AI Image Generation",
 "AI Productivity","Earn Money Using AI","AI in Education","Next-Gen AI Technology"
 ][i],
-
 img:`https://picsum.photos/900/400?random=${i}`,
-
-text:`Artificial Intelligence is rapidly transforming education, productivity,
-career opportunities, and daily digital life. This detailed article explains
-${["AI tools for students","AI homework support","AI chatbot platforms","AI coding assistants","future AI technology","AI image generation","AI productivity tools","earning money using AI","AI in education","next generation AI systems"][i]}
-in depth.
-
-AI helps users save time, improve accuracy, and learn faster through automation
-and intelligent assistance. Students can understand difficult subjects, generate
-notes, and prepare for exams. Professionals can automate tasks, create content,
-and increase efficiency.
-
-Another major advantage of AI is accessibility. Anyone with an internet
-connection can use powerful tools that were once limited to experts. This
-democratization of technology is opening new opportunities for learning,
-innovation, and income generation.
-
-However, responsible usage is important. AI should assist human creativity,
-not replace thinking. Ethical use, originality, and learning mindset are
-essential for long-term success.
-
-In the coming years, AI will become a core skill similar to computers and the
-internet. People who start learning AI today will lead tomorrow’s digital
-economy and innovation landscape.
-
-Overall, Artificial Intelligence is not just a trend—it is a powerful
-transformation shaping the future of humanity, education, and technology.`
+text:`Artificial Intelligence is transforming education, productivity, careers, and daily life. Learning AI today gives powerful future opportunities in technology and innovation.`
 }));
 
-document.write(
-blogData.map(b=>`
+document.write(blogData.map(b=>`
 <div class="card">
 <img src="${b.img}" class="blog-img">
 <h2>${b.title}</h2>
 <p class="blog-text">${b.text}</p>
-</div>
-`).join("")
-);
+</div>`).join(""));
 </script>
 
-<!-- ⭐ AI CHAT -->
+<!-- AI CHAT -->
 <div class="card">
 <h2 style="text-align:center">Ask Model AI</h2>
-
 <div id="messages" class="messages"></div>
 
 <div class="inputbar">
@@ -172,7 +108,7 @@ blogData.map(b=>`
 </div>
 </div>
 
-<!-- ⭐ FOOTER -->
+<!-- FOOTER -->
 <div class="footer">
 © 2026 Model AI. All rights reserved.<br><br>
 <a href="/about.html">About</a> |
@@ -192,7 +128,6 @@ const messages=document.getElementById("messages");
 const input=document.getElementById("input");
 const userText=document.getElementById("user");
 
-/* sidebar */
 function toggleSidebar(){
 sidebar.classList.toggle("show");
 overlay.classList.toggle("show");
@@ -208,33 +143,26 @@ projectId:"model-ai-727b1"
 const auth=firebase.auth();
 const db=firebase.firestore();
 
-/* login */
 function login(){
 const provider=new firebase.auth.GoogleAuthProvider();
 auth.signInWithPopup(provider).catch(e=>alert(e.message));
 }
 function logout(){auth.signOut();}
 
-/* load chat */
+/* Load chat history */
 auth.onAuthStateChanged(async user=>{
 userText.innerText=user?"👤 "+user.email:"Not logged in";
 if(!user) return;
 
-const snap=await db.collection("chats")
-.where("uid","==",user.uid)
-.orderBy("time")
-.get();
-
+const snap=await db.collection("chats").where("uid","==",user.uid).orderBy("time").get();
 messages.innerHTML="";
 snap.forEach(doc=>{
 const c=doc.data();
-messages.innerHTML+=`
-<div class="msg user">${c.message}</div>
-<div class="msg bot">${c.reply}</div>`;
+messages.innerHTML+=`<div class="msg user">${c.message}</div><div class="msg bot">${c.reply}</div>`;
 });
 });
 
-/* send */
+/* REAL AI SEND */
 async function sendMsg(){
 const text=input.value.trim();
 if(!text) return;
@@ -242,28 +170,50 @@ if(!text) return;
 const user=auth.currentUser;
 if(!user){alert("Login first");return;}
 
-messages.innerHTML+=`
-<div class="msg user">${text}</div>
-<div class="msg bot">AI reply working ✔</div>`;
+messages.innerHTML+=`<div class="msg user">${text}</div>`;
+input.value="";
+messages.scrollTop=messages.scrollHeight;
 
-await db.collection("chats").add({
-uid:user.uid,
-email:user.email,
-message:text,
-reply:"AI reply working ✔",
-time:new Date()
+const loading=document.createElement("div");
+loading.className="msg bot";
+loading.innerText="Thinking...";
+messages.appendChild(loading);
+
+try{
+const res=await fetch("https://openrouter.ai/api/v1/chat/completions",{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+"Authorization":"Bearer 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"
+},
+body:JSON.stringify({
+model:"mistralai/mistral-7b-instruct",
+messages:[{role:"user",content:text}]
+})
 });
 
-input.value="";
-speechSynthesis.speak(new SpeechSynthesisUtterance("AI reply working"));
+const data=await res.json();
+const reply=data.choices?.[0]?.message?.content || "No reply";
+
+loading.innerText=reply;
+
+await db.collection("chats").add({
+uid:user.uid,email:user.email,message:text,reply:reply,time:new Date()
+});
+
+speechSynthesis.speak(new SpeechSynthesisUtterance(reply));
+
+}catch(e){
+loading.innerText="AI error. Check API key.";
+}
 }
 
-/* enter */
+/* Enter key */
 input.addEventListener("keydown",e=>{
 if(e.key==="Enter"){e.preventDefault();sendMsg();}
 });
 
-/* voice */
+/* Voice input */
 function startVoice(){
 const rec=new (window.SpeechRecognition||window.webkitSpeechRecognition)();
 rec.lang="en-US";
@@ -271,7 +221,6 @@ rec.start();
 rec.onresult=e=>{input.value=e.results[0][0].transcript;}
 }
 
-/* new chat */
 function newChat(){messages.innerHTML="";}
 </script>
 
