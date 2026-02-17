@@ -155,22 +155,15 @@ loading.innerText="Thinking...";
 messages.appendChild(loading);
 
 try{
-const res=await fetch("https://openrouter.ai/api/v1/chat/completions",{
-method:"POST",
-headers:{
-"Content-Type":"application/json",
-"Authorization":"Bearer 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"
-},
-body:JSON.stringify({
-model:"openchat/openchat-7b",
-messages:[{role:"user",content:text}]
-})
-});
 
-const data=await res.json();
-const reply=data.choices?.[0]?.message?.content || "No response from AI.";
+// ✅ WORKING FREE AI API
+const res = await fetch("https://api.affiliateplus.xyz/api/chatbot?message="
++ encodeURIComponent(text) + "&name=ModelAI&owner=You");
 
-loading.innerText=reply;
+const data = await res.json();
+const reply = data.message || "No response from AI.";
+
+loading.innerText = reply;
 
 await db.collection("chats").add({
 uid:user.uid,email:user.email,message:text,reply:reply,time:new Date()
@@ -179,7 +172,7 @@ uid:user.uid,email:user.email,message:text,reply:reply,time:new Date()
 speechSynthesis.speak(new SpeechSynthesisUtterance(reply));
 
 }catch(e){
-loading.innerText="AI connection error. Check API key.";
+loading.innerText="AI connection error.";
 }
 }
 
