@@ -5,51 +5,37 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Model AI</title>
 
-<!-- Adsense -->
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8731009230578197"
-crossorigin="anonymous"></script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8731009230578197" crossorigin="anonymous"></script>
 
 <style>
 body{margin:0;font-family:Arial;background:#f5f7fb}
 .app{display:flex;min-height:100vh}
-
 .header{text-align:center;padding:25px 10px;font-size:32px;font-weight:bold;color:#2563eb;background:#fff;border-bottom:1px solid #e5e7eb}
-
 .menuBtn{position:fixed;top:15px;left:15px;z-index:1001;background:#2563eb;color:#fff;border:none;padding:10px 14px;border-radius:8px;cursor:pointer;}
-
 .sidebar{width:240px;background:#fff;border-right:1px solid #e5e7eb;padding:20px;overflow-y:auto;position:fixed;top:0;left:0;height:100vh;z-index:1000;transform:translateX(-100%);transition:.3s;}
 .sidebar.show{transform:translateX(0)}
-
 .overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.4);z-index:999;display:none;}
 .overlay.show{display:block}
-
 .btn{width:100%;padding:12px;margin-bottom:10px;border:none;border-radius:10px;font-weight:bold;cursor:pointer}
 .login{background:#2563eb;color:#fff}
 .new{background:#22c55e;color:#fff}
 .logout{background:#ef4444;color:#fff}
-
 .main{flex:1;padding:20px}
 .container{max-width:950px;margin:auto}
-
 .card{background:#fff;padding:20px;border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,.05);margin-bottom:25px}
-
 .blog-img{width:100%;border-radius:12px;margin-bottom:12px}
 .blog-text{line-height:1.8;color:#333}
-
 .messages{height:320px;overflow:auto;margin:15px 0}
 .msg{max-width:80%;padding:12px;border-radius:12px;margin-bottom:10px}
 .user{background:#2563eb;color:#fff;margin-left:auto}
 .bot{background:#e5e7eb}
-
 .inputbar{display:flex;gap:8px}
 #input{flex:1;padding:12px;border-radius:12px;border:1px solid #ccc}
 .send{background:#2563eb;color:#fff;border:none;border-radius:12px;padding:12px 16px;cursor:pointer}
 .voice{background:#22c55e;color:#fff;border:none;border-radius:12px;padding:12px 16px;cursor:pointer}
-
 .footer{text-align:center;padding:30px;background:#fff;border-top:1px solid #e5e7eb;margin-top:40px;font-size:14px}
 </style>
 
-<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -62,7 +48,6 @@ body{margin:0;font-family:Arial;background:#f5f7fb}
 
 <div class="app">
 
-<!-- SIDEBAR -->
 <div id="sidebar" class="sidebar">
 <button class="btn login" onclick="login()">Google Login</button>
 <button class="btn new" onclick="newChat()">New Chat</button>
@@ -70,33 +55,27 @@ body{margin:0;font-family:Arial;background:#f5f7fb}
 <p id="user">Not logged in</p>
 </div>
 
-<!-- MAIN -->
 <div class="main">
 <div class="container">
 
 <div class="header">Model AI</div>
 
-<!-- BLOGS -->
 <script>
-const blogData = Array.from({length:10}, (_,i)=>({
-title:[
+const blogTitles=[
 "AI Tools for Students","AI Homework Help","ChatGPT Alternatives",
 "AI Coding Guide","Future of AI","AI Image Generation",
 "AI Productivity","Earn Money Using AI","AI in Education","Next-Gen AI Technology"
-][i],
-img:`https://picsum.photos/900/400?random=${i}`,
-text:`Artificial Intelligence is transforming education, productivity, careers, and daily life. Learning AI today gives powerful future opportunities in technology and innovation.`
-}));
+];
 
-document.write(blogData.map(b=>`
+document.write(blogTitles.map((t,i)=>`
 <div class="card">
-<img src="${b.img}" class="blog-img">
-<h2>${b.title}</h2>
-<p class="blog-text">${b.text}</p>
-</div>`).join(""));
+<img src="https://picsum.photos/900/400?random=${i}" class="blog-img">
+<h2>${t}</h2>
+<p class="blog-text">Artificial Intelligence is transforming education, careers, productivity, and daily life. Learning AI today opens powerful future opportunities in technology and innovation.</p>
+</div>
+`).join(""));
 </script>
 
-<!-- AI CHAT -->
 <div class="card">
 <h2 style="text-align:center">Ask Model AI</h2>
 <div id="messages" class="messages"></div>
@@ -108,7 +87,6 @@ document.write(blogData.map(b=>`
 </div>
 </div>
 
-<!-- FOOTER -->
 <div class="footer">
 © 2026 Model AI. All rights reserved.<br><br>
 <a href="/about.html">About</a> |
@@ -133,7 +111,6 @@ sidebar.classList.toggle("show");
 overlay.classList.toggle("show");
 }
 
-/* Firebase */
 firebase.initializeApp({
 apiKey:"AIzaSyDUcWSbU-ELP7Erx9yGPbq65clsn2ME8pk",
 authDomain:"model-ai-727b1.firebaseapp.com",
@@ -149,7 +126,6 @@ auth.signInWithPopup(provider).catch(e=>alert(e.message));
 }
 function logout(){auth.signOut();}
 
-/* Load chat history */
 auth.onAuthStateChanged(async user=>{
 userText.innerText=user?"👤 "+user.email:"Not logged in";
 if(!user) return;
@@ -162,7 +138,6 @@ messages.innerHTML+=`<div class="msg user">${c.message}</div><div class="msg bot
 });
 });
 
-/* REAL AI SEND */
 async function sendMsg(){
 const text=input.value.trim();
 if(!text) return;
@@ -184,16 +159,16 @@ const res=await fetch("https://openrouter.ai/api/v1/chat/completions",{
 method:"POST",
 headers:{
 "Content-Type":"application/json",
-"Authorization":"Bearer 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"
+"Authorization":"Bearer YOUR_OPENROUTER_KEY_HERE"
 },
 body:JSON.stringify({
-model:"mistralai/mistral-7b-instruct",
+model:"openchat/openchat-7b",
 messages:[{role:"user",content:text}]
 })
 });
 
 const data=await res.json();
-const reply=data.choices?.[0]?.message?.content || "No reply";
+const reply=data.choices?.[0]?.message?.content || "No response from AI.";
 
 loading.innerText=reply;
 
@@ -204,16 +179,14 @@ uid:user.uid,email:user.email,message:text,reply:reply,time:new Date()
 speechSynthesis.speak(new SpeechSynthesisUtterance(reply));
 
 }catch(e){
-loading.innerText="AI error. Check API key.";
+loading.innerText="AI connection error. Check API key.";
 }
 }
 
-/* Enter key */
 input.addEventListener("keydown",e=>{
 if(e.key==="Enter"){e.preventDefault();sendMsg();}
 });
 
-/* Voice input */
 function startVoice(){
 const rec=new (window.SpeechRecognition||window.webkitSpeechRecognition)();
 rec.lang="en-US";
