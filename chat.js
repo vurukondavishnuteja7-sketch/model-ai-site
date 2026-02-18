@@ -1,9 +1,7 @@
-// public/chat.js
-
-const messages = document.getElementById("messages");
 const input = document.getElementById("input");
+const messages = document.getElementById("messages");
+const sendBtn = document.getElementById("sendBtn");
 
-// add message UI
 function addMsg(text, type) {
   const div = document.createElement("div");
   div.className = "msg " + type;
@@ -12,64 +10,36 @@ function addMsg(text, type) {
   messages.scrollTop = messages.scrollHeight;
 }
 
-// SEND MESSAGE TO SERVER AI
 async function sendMsg() {
   const text = input.value.trim();
   if (!text) return;
 
   addMsg(text, "user");
   input.value = "";
-
   addMsg("Thinking...", "bot");
 
   try {
     const res = await fetch("/api/chat", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ message: text }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: text })
     });
 
     const data = await res.json();
-
     messages.lastChild.innerText = data.reply;
 
-    // 🔊 voice reply
     if ("speechSynthesis" in window) {
-      const speech = new SpeechSynthesisUtterance(data.reply);
-      speech.lang = "en-US";
-      window.speechSynthesis.cancel();
-      window.speechSynthesis.speak(speech);
+      speechSynthesis.cancel();
+      speechSynthesis.speak(new SpeechSynthesisUtterance(data.reply));
     }
+
   } catch {
-    messages.lastChild.innerText = "Server error. Try again.";
+    messages.lastChild.innerText = "AI connection error.";
   }
 }
 
-// ENTER KEY
-input.addEventListener("keydown", (e) => {
+sendBtn.addEventListener("click", sendMsg);
+
+input.addEventListener("keydown", e => {
   if (e.key === "Enter") sendMsg();
 });
-
-// 🎤 VOICE INPUT
-function startVoice() {
-  const SpeechRecognition =
-    window.SpeechRecognition || window.webkitSpeechRecognition;
-
-  if (!SpeechRecognition) {
-    alert("Voice not supported in this browser");
-    return;
-  }
-
-  const rec = new SpeechRecognition();
-  rec.lang = "en-US";
-  rec.start();
-
-  rec.onresult = (e) => {
-    input.value = e.results[0][0].transcript;
-  };
-}
-
-window.sendMsg = sendMsg;
-window.startVoice = startVoice;
