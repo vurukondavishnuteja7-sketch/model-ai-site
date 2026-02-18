@@ -1,14 +1,42 @@
-/* BLOGS FULL CONTENT */
-const blogTitles=[
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Model AI</title>
+
+<!-- Adsense -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8731009230578197" crossorigin="anonymous"></script>
+
+<style>
+body{margin:0;font-family:Arial;background:#f5f7fb}
+.header{text-align:center;padding:20px;font-size:28px;font-weight:bold;background:#fff}
+.card{background:#fff;margin:20px;padding:20px;border-radius:12px}
+.blog-img{width:100%;border-radius:10px}
+.messages{height:250px;overflow:auto;margin:10px 0}
+.msg{padding:10px;border-radius:10px;margin:6px 0;max-width:80%}
+.user{background:#2563eb;color:#fff;margin-left:auto}
+.bot{background:#eee}
+.inputbar{display:flex;gap:6px}
+input{flex:1;padding:10px}
+button{padding:10px}
+.footer{text-align:center;padding:30px;background:#fff}
+</style>
+</head>
+
+<body>
+
+<div class="header">Model AI</div>
+
+<!-- 🔥 BLOGS -->
+<script>
+const blogs=[
 "AI Tools for Students","AI Homework Help","ChatGPT Alternatives",
 "AI Coding Guide","Future of AI","AI Image Generation",
 "AI Productivity","Earn Money Using AI","AI in Education","Next-Gen AI"
 ];
 
-const blogDiv=document.getElementById("blogs");
-
-blogTitles.forEach((t,i)=>{
-blogDiv.innerHTML+=`
+document.write(blogs.map((t,i)=>`
 <div class="card">
 <img src="https://picsum.photos/900/400?random=${i}" class="blog-img">
 <h2>${t}</h2>
@@ -16,34 +44,36 @@ blogDiv.innerHTML+=`
 Artificial Intelligence is transforming education, jobs, business and daily life.
 Learning AI today gives powerful future career and earning opportunities.
 </p>
-</div>`;
-});
+</div>
+`).join(""));
+</script>
 
-/* SIDEBAR */
-function toggleSidebar(){
-sidebar.classList.toggle("show");
-overlay.classList.toggle("show");
-}
+<!-- Adsense box -->
+<div class="card" style="text-align:center">
+<ins class="adsbygoogle"
+style="display:block"
+data-ad-client="ca-pub-8731009230578197"
+data-ad-slot="1234567890"
+data-ad-format="auto"></ins>
+<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+</div>
 
-/* FIREBASE LOGIN */
-firebase.initializeApp({
-apiKey:"YOUR_FIREBASE_KEY",
-authDomain:"YOUR_DOMAIN.firebaseapp.com"
-});
+<!-- 🤖 AI CHAT -->
+<div class="card">
+<h2>Ask AI</h2>
 
-const auth=firebase.auth();
-const userText=document.getElementById("user");
+<div id="messages" class="messages"></div>
 
-function login(){
-auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
-}
-function logout(){auth.signOut();}
+<div class="inputbar">
+<input id="input" placeholder="Ask anything...">
+<button onclick="startVoice()">🎤</button>
+<button onclick="sendMsg()">Send</button>
+</div>
+</div>
 
-auth.onAuthStateChanged(u=>{
-userText.innerText=u ? "👤 "+u.email : "Not logged in";
-});
+<div class="footer">© 2026 Model AI • Uses Google AdSense</div>
 
-/* CHAT UI */
+<script>
 const messages=document.getElementById("messages");
 const input=document.getElementById("input");
 
@@ -55,7 +85,7 @@ messages.appendChild(d);
 messages.scrollTop=messages.scrollHeight;
 }
 
-/* AI CALL */
+/* SIMPLE FREE AI (no key needed) */
 async function sendMsg(){
 const text=input.value.trim();
 if(!text) return;
@@ -64,28 +94,42 @@ addMsg(text,"user");
 input.value="";
 addMsg("Thinking...","bot");
 
-const res=await fetch("/api/chat",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({message:text})
-});
+try{
+const res=await fetch("https://api.affiliateplus.xyz/api/chatbot?message="
++ encodeURIComponent(text) + "&name=ModelAI&owner=You");
 
 const data=await res.json();
-messages.lastChild.innerText=data.reply;
+const reply=data.message || "AI not responding.";
 
-/* SPEECH */
-speechSynthesis.speak(new SpeechSynthesisUtterance(data.reply));
+messages.lastChild.innerText=reply;
+
+/* voice speech */
+if("speechSynthesis" in window){
+speechSynthesis.speak(new SpeechSynthesisUtterance(reply));
 }
 
-/* ENTER */
+}catch{
+messages.lastChild.innerText="Internet error.";
+}
+}
+
+/* enter key */
 input.addEventListener("keydown",e=>{
 if(e.key==="Enter") sendMsg();
 });
 
-/* VOICE */
+/* voice input */
 function startVoice(){
+try{
 const r=new(window.SpeechRecognition||window.webkitSpeechRecognition)();
 r.lang="en-US";
 r.start();
 r.onresult=e=>{input.value=e.results[0][0].transcript;}
+}catch{
+alert("Voice not supported in this browser");
 }
+}
+</script>
+
+</body>
+</html>
