@@ -8,7 +8,7 @@ app.use(cors());
 app.use(express.json());
 
 // 🔐 IKKADE API KEY PETTALI
-const OPENROUTER_API_KEY = "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";
+const OPENROUTER_API_KEY = "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";
 
 app.post("/api/chat", async (req, res) => {
   try {
