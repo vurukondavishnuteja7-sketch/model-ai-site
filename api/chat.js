@@ -7,7 +7,7 @@ app.use(cors());
 app.use(express.json());
 
 /* 👉 Mee OpenRouter API key ikkada pettali */
-const OPENROUTER_KEY = "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";
+const OPENROUTER_KEY = "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";
 
 app.post("/api/chat", async (req, res) => {
   try {
@@ -18,7 +18,7 @@ app.post("/api/chat", async (req, res) => {
       {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${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}`,
+          "Authorization": `Bearer ${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}`,
           "Content-Type": "application/json",
           "HTTP-Referer": "http://localhost:3000", // optional
           "X-Title": "Model AI" // optional
