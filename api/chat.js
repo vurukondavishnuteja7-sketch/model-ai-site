@@ -10,9 +10,8 @@ export default async function handler(req, res) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`
-      },
-      body: JSON.stringify({
+        "Authorization": `Bearer ${process.env.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}`
+        
         model: "openai/gpt-3.5-turbo",
         messages: [{ role: "user", content: message }]
       })
