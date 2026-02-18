@@ -1,34 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Model AI</title>
 
-<!-- Adsense -->
+<!-- ADSENSE -->
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8731009230578197" crossorigin="anonymous"></script>
 
 <style>
 body{margin:0;font-family:Arial;background:#f5f7fb}
-.header{text-align:center;padding:20px;font-size:28px;font-weight:bold;background:#fff}
-.card{background:#fff;margin:20px;padding:20px;border-radius:12px}
-.blog-img{width:100%;border-radius:10px}
-.messages{height:250px;overflow:auto;margin:10px 0}
-.msg{padding:10px;border-radius:10px;margin:6px 0;max-width:80%}
+.header{text-align:center;padding:25px;font-size:30px;font-weight:bold;color:#2563eb;background:#fff}
+.container{max-width:900px;margin:auto;padding:20px}
+.card{background:#fff;padding:20px;border-radius:12px;margin-bottom:20px}
+.messages{height:300px;overflow:auto;margin:10px 0}
+.msg{padding:10px;border-radius:10px;margin:5px 0;max-width:80%}
 .user{background:#2563eb;color:#fff;margin-left:auto}
-.bot{background:#eee}
-.inputbar{display:flex;gap:6px}
-input{flex:1;padding:10px}
-button{padding:10px}
-.footer{text-align:center;padding:30px;background:#fff}
+.bot{background:#e5e7eb}
+.inputbar{display:flex;gap:10px}
+#input{flex:1;padding:12px;border-radius:10px;border:1px solid #ccc}
+button{padding:12px 16px;border:none;border-radius:10px;background:#2563eb;color:#fff}
+.blog-img{width:100%;border-radius:10px;margin-bottom:10px}
+.footer{text-align:center;padding:20px;background:#fff;margin-top:30px}
 </style>
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 </head>
 
 <body>
 
 <div class="header">Model AI</div>
 
-<!-- 🔥 BLOGS -->
+<div class="container">
+
+<!-- 🔥 10 BLOGS -->
 <script>
 const blogs=[
 "AI Tools for Students","AI Homework Help","ChatGPT Alternatives",
@@ -36,100 +43,73 @@ const blogs=[
 "AI Productivity","Earn Money Using AI","AI in Education","Next-Gen AI"
 ];
 
-document.write(blogs.map((t,i)=>`
+document.write(
+blogs.map((t,i)=>`
 <div class="card">
 <img src="https://picsum.photos/900/400?random=${i}" class="blog-img">
 <h2>${t}</h2>
-<p>
-Artificial Intelligence is transforming education, jobs, business and daily life.
-Learning AI today gives powerful future career and earning opportunities.
-</p>
+<p>Artificial Intelligence is transforming education, jobs, business and daily life.
+Learning AI today gives powerful future career and earning opportunities.</p>
 </div>
-`).join(""));
+`).join("")
+);
 </script>
 
-<!-- Adsense box -->
+<!-- ADSENSE BOX -->
 <div class="card" style="text-align:center">
 <ins class="adsbygoogle"
 style="display:block"
 data-ad-client="ca-pub-8731009230578197"
 data-ad-slot="1234567890"
-data-ad-format="auto"></ins>
+data-ad-format="auto"
+data-full-width-responsive="true"></ins>
 <script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
 </div>
 
 <!-- 🤖 AI CHAT -->
 <div class="card">
-<h2>Ask AI</h2>
-
+<h2>Ask Model AI</h2>
 <div id="messages" class="messages"></div>
 
 <div class="inputbar">
-<input id="input" placeholder="Ask anything...">
+<input id="input" placeholder="Ask anything..." />
 <button onclick="startVoice()">🎤</button>
 <button onclick="sendMsg()">Send</button>
 </div>
 </div>
 
-<div class="footer">© 2026 Model AI • Uses Google AdSense</div>
+<!-- FIREBASE LOGIN -->
+<div class="card">
+<button onclick="login()">Login with Google</button>
+<button onclick="logout()">Logout</button>
+<p id="user">Not logged in</p>
+</div>
+
+</div>
+
+<div class="footer">© 2026 Model AI • AdSense Ready</div>
 
 <script>
-const messages=document.getElementById("messages");
-const input=document.getElementById("input");
-
-function addMsg(t,type){
-const d=document.createElement("div");
-d.className="msg "+type;
-d.innerText=t;
-messages.appendChild(d);
-messages.scrollTop=messages.scrollHeight;
-}
-
-/* SIMPLE FREE AI (no key needed) */
-async function sendMsg(){
-const text=input.value.trim();
-if(!text) return;
-
-addMsg(text,"user");
-input.value="";
-addMsg("Thinking...","bot");
-
-try{
-const res=await fetch("https://api.affiliateplus.xyz/api/chatbot?message="
-+ encodeURIComponent(text) + "&name=ModelAI&owner=You");
-
-const data=await res.json();
-const reply=data.message || "AI not responding.";
-
-messages.lastChild.innerText=reply;
-
-/* voice speech */
-if("speechSynthesis" in window){
-speechSynthesis.speak(new SpeechSynthesisUtterance(reply));
-}
-
-}catch{
-messages.lastChild.innerText="Internet error.";
-}
-}
-
-/* enter key */
-input.addEventListener("keydown",e=>{
-if(e.key==="Enter") sendMsg();
+// FIREBASE CONFIG (mee details pettali)
+firebase.initializeApp({
+apiKey: "YOUR_FIREBASE_KEY",
+authDomain: "YOUR_DOMAIN.firebaseapp.com"
 });
 
-/* voice input */
-function startVoice(){
-try{
-const r=new(window.SpeechRecognition||window.webkitSpeechRecognition)();
-r.lang="en-US";
-r.start();
-r.onresult=e=>{input.value=e.results[0][0].transcript;}
-}catch{
-alert("Voice not supported in this browser");
+const auth = firebase.auth();
+const userText = document.getElementById("user");
+
+function login(){
+const provider = new firebase.auth.GoogleAuthProvider();
+auth.signInWithPopup(provider);
 }
-}
+function logout(){auth.signOut();}
+
+auth.onAuthStateChanged(u=>{
+userText.innerText = u ? "👤 "+u.email : "Not logged in";
+});
 </script>
 
+<script src="chat.js"></script>
 </body>
 </html>
