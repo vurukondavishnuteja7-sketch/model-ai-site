@@ -1,26 +1,50 @@
+// api/chat.js
 import express from "express";
 import fetch from "node-fetch";
+import cors from "cors";
 
-const app=express();
+const app = express();
+app.use(cors());
 app.use(express.json());
 
-app.post("/api/chat", async (req,res)=>{
-const msg=req.body.message;
+// 🔐 IKKADE API KEY PETTALI
+const OPENROUTER_API_KEY = "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";
 
-const response=await fetch("https://openrouter.ai/api/v1/chat/completions",{
-method:"POST",
-headers:{
-"Authorization":"Bearer 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",
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-model:"mistralai/mistral-7b-instruct",
-messages:[{role:"user",content:msg}]
-})
+app.post("/api/chat", async (req, res) => {
+  try {
+    const { message } = req.body;
+
+    if (!message) {
+      return res.status(400).json({ reply: "Message is required" });
+    }
+
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: "mistralai/mistral-7b-instruct",
+        messages: [{ role: "user", content: message }],
+      }),
+    });
+
+    const data = await response.json();
+
+    const reply =
+      data?.choices?.[0]?.message?.content ||
+      "AI not responding. Check API key.";
+
+    res.json({ reply });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ reply: "Server error" });
+  }
 });
 
-const data=await response.json();
-res.json({reply:data.choices[0].message.content});
+// server run
+const PORT = 3000;
+app.listen(PORT, () => {
+  console.log("AI server running on http://localhost:" + PORT);
 });
-
-app.listen(3000,()=>console.log("AI Server Running"));
