@@ -1,147 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Model AI</title>
-
-<!-- GOOGLE ADSENSE -->
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8731009230578197" crossorigin="anonymous"></script>
-
-<style>
-body{margin:0;font-family:Arial;background:#f5f7fb}
-.app{display:flex;min-height:100vh}
-.header{text-align:center;padding:25px;font-size:32px;font-weight:bold;color:#2563eb;background:#fff;border-bottom:1px solid #e5e7eb}
-.menuBtn{position:fixed;top:15px;left:15px;z-index:1001;background:#2563eb;color:#fff;border:none;padding:10px 14px;border-radius:8px;cursor:pointer}
-.sidebar{width:260px;background:#fff;border-right:1px solid #e5e7eb;padding:20px;position:fixed;top:0;left:0;height:100vh;z-index:1000;transform:translateX(-100%);transition:.3s;overflow:auto}
-.sidebar.show{transform:translateX(0)}
-.overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.4);z-index:999;display:none}
-.overlay.show{display:block}
-.main{flex:1;padding:20px}
-.container{max-width:950px;margin:auto}
-.card{background:#fff;padding:22px;border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,.05);margin-bottom:25px}
-.blog-img{width:100%;border-radius:12px;margin-bottom:12px}
-.blog-text{line-height:1.8;color:#333}
-.messages{height:300px;overflow:auto;margin:15px 0}
-.msg{max-width:80%;padding:12px;border-radius:12px;margin-bottom:10px}
-.user{background:#2563eb;color:#fff;margin-left:auto}
-.bot{background:#e5e7eb}
-.inputbar{display:flex;gap:8px}
-#input{flex:1;padding:12px;border-radius:12px;border:1px solid #ccc}
-.send,.voice{background:#2563eb;color:#fff;border:none;border-radius:12px;padding:12px 18px;cursor:pointer}
-.footer{text-align:center;padding:30px;background:#fff;border-top:1px solid #e5e7eb;margin-top:40px;font-size:14px}
-</style>
-
-<!-- FIREBASE -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-</head>
-
-<body>
-
-<button class="menuBtn" onclick="toggleSidebar()">☰</button>
-<div id="overlay" class="overlay" onclick="toggleSidebar()"></div>
-
-<div class="app">
-
-<!-- SIDEBAR -->
-<div id="sidebar" class="sidebar">
-<h2>Model AI</h2>
-
-<button onclick="login()">Login</button>
-<button onclick="logout()">Logout</button>
-
-<p id="user">Not logged in</p>
-
-<hr>
-<p style="font-size:13px;color:#555">
-This website uses Google AdSense ads and follows all policies.
-</p>
-</div>
-
-<!-- MAIN -->
-<div class="main">
-<div class="container">
-
-<div class="header">Model AI</div>
-
-<!-- BLOGS -->
-<script>
-const blogs=[
+/* BLOGS FULL CONTENT */
+const blogTitles=[
 "AI Tools for Students","AI Homework Help","ChatGPT Alternatives",
 "AI Coding Guide","Future of AI","AI Image Generation",
-"AI Productivity","Earn Money Using AI","AI in Education","Next-Gen AI Technology"
+"AI Productivity","Earn Money Using AI","AI in Education","Next-Gen AI"
 ];
 
-document.write(blogs.map((t,i)=>`
+const blogDiv=document.getElementById("blogs");
+
+blogTitles.forEach((t,i)=>{
+blogDiv.innerHTML+=`
 <div class="card">
 <img src="https://picsum.photos/900/400?random=${i}" class="blog-img">
 <h2>${t}</h2>
-<p class="blog-text">
-Artificial Intelligence is transforming education, careers, productivity,
-business, and daily life. Learning AI opens powerful future opportunities
-in freelancing, jobs, and innovation across the world.
+<p>
+Artificial Intelligence is transforming education, jobs, business and daily life.
+Learning AI today gives powerful future career and earning opportunities.
 </p>
-</div>
-`).join(""));
-</script>
+</div>`;
+});
 
-<!-- ADSENSE BOX -->
-<div class="card" style="text-align:center">
-<ins class="adsbygoogle"
-     style="display:block"
-     data-ad-client="ca-pub-8731009230578197"
-     data-ad-slot="1234567890"
-     data-ad-format="auto"
-     data-full-width-responsive="true"></ins>
-<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
-</div>
-
-<!-- AI CHAT -->
-<div class="card">
-<h2 style="text-align:center">Ask Model AI</h2>
-
-<div id="messages" class="messages"></div>
-
-<div class="inputbar">
-<input id="input" placeholder="Ask anything...">
-<button class="voice" onclick="startVoice()">🎤</button>
-<button class="send" onclick="sendMsg()">Send</button>
-</div>
-</div>
-
-<div class="footer">© 2026 Model AI. All rights reserved.</div>
-
-</div>
-</div>
-</div>
-
-<script>
-const sidebar=document.getElementById("sidebar");
-const overlay=document.getElementById("overlay");
-const messages=document.getElementById("messages");
-const input=document.getElementById("input");
-const userText=document.getElementById("user");
-
+/* SIDEBAR */
 function toggleSidebar(){
 sidebar.classList.toggle("show");
 overlay.classList.toggle("show");
 }
 
-/* FIREBASE CONFIG */
+/* FIREBASE LOGIN */
 firebase.initializeApp({
-apiKey:"AIzaSyDUcWSbU-ELP7Erx9yGPbq65clsn2ME8pk",
-authDomain:"model-ai-727b1.firebaseapp.com",
-projectId:"model-ai-727b1"
+apiKey:"YOUR_FIREBASE_KEY",
+authDomain:"YOUR_DOMAIN.firebaseapp.com"
 });
 
 const auth=firebase.auth();
-const db=firebase.firestore();
+const userText=document.getElementById("user");
 
 function login(){
-const provider=new firebase.auth.GoogleAuthProvider();
-auth.signInWithPopup(provider);
+auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
 }
 function logout(){auth.signOut();}
 
@@ -149,7 +43,10 @@ auth.onAuthStateChanged(u=>{
 userText.innerText=u ? "👤 "+u.email : "Not logged in";
 });
 
-/* ADD MESSAGE */
+/* CHAT UI */
+const messages=document.getElementById("messages");
+const input=document.getElementById("input");
+
 function addMsg(t,type){
 const d=document.createElement("div");
 d.className="msg "+type;
@@ -158,7 +55,7 @@ messages.appendChild(d);
 messages.scrollTop=messages.scrollHeight;
 }
 
-/* ===== AI SEND WORKING ===== */
+/* AI CALL */
 async function sendMsg(){
 const text=input.value.trim();
 if(!text) return;
@@ -167,59 +64,28 @@ addMsg(text,"user");
 input.value="";
 addMsg("Thinking...","bot");
 
-try{
+const res=await fetch("/api/chat",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({message:text})
+});
 
-/* PRIMARY FREE AI */
-let res=await fetch("https://api.affiliateplus.xyz/api/chatbot?message="+encodeURIComponent(text)+"&name=ModelAI&owner=You");
-let data=await res.json();
-let reply=data.message;
-
-/* BACKUP AI */
-if(!reply){
-res=await fetch("https://api.popcat.xyz/chatbot?msg="+encodeURIComponent(text));
-data=await res.json();
-reply=data.response;
-}
-
-messages.lastChild.innerText=reply || "AI not responding.";
+const data=await res.json();
+messages.lastChild.innerText=data.reply;
 
 /* SPEECH */
-if("speechSynthesis" in window){
-const speech=new SpeechSynthesisUtterance(reply);
-speech.lang="en-US";
-window.speechSynthesis.cancel();
-window.speechSynthesis.speak(speech);
+speechSynthesis.speak(new SpeechSynthesisUtterance(data.reply));
 }
 
-}catch{
-messages.lastChild.innerText="Internet error. Try again.";
-}
-}
+/* ENTER */
+input.addEventListener("keydown",e=>{
+if(e.key==="Enter") sendMsg();
+});
 
-/* ENTER KEY */
-input.addEventListener("keydown",e=>{if(e.key==="Enter") sendMsg();});
-
-/* VOICE INPUT FULL FIX */
+/* VOICE */
 function startVoice(){
-try{
-const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
-if(!SpeechRecognition){alert("Voice not supported");return;}
-
-const rec=new SpeechRecognition();
-rec.lang="en-US";
-rec.start();
-
-rec.onresult=e=>{
-input.value=e.results[0][0].transcript;
-};
-
-rec.onerror=()=>alert("Microphone permission allow cheyyi");
-
-}catch{
-alert("Voice not working in this browser");
+const r=new(window.SpeechRecognition||window.webkitSpeechRecognition)();
+r.lang="en-US";
+r.start();
+r.onresult=e=>{input.value=e.results[0][0].transcript;}
 }
-}
-</script>
-
-</body>
-</html>
