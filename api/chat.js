@@ -22,7 +22,7 @@ app.post("/api/chat", async (req, res) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
+        "Authorization": `Bearer ${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}`,
       },
       body: JSON.stringify({
         model: "mistralai/mistral-7b-instruct",
