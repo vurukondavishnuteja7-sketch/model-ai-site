@@ -143,8 +143,18 @@ margin-bottom:20px;
 <!-- SIDEBAR -->
 <div class="sidebar" id="sidebar">
 <h2>Login</h2>
+
 <button onclick="googleLogin()">Login with Google</button>
+
+<input type="email" id="email" placeholder="Email">
+<input type="password" id="password" placeholder="Password">
+
+<button onclick="emailLogin()">Login</button>
+<button onclick="registerUser()">Register</button>
+<button onclick="logoutUser()">Logout</button>
+
 <div id="userInfo">Not logged in</div>
+
 <button onclick="toggleSidebar()">Close</button>
 </div>
 
@@ -334,47 +344,34 @@ signOut,
 onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-const firebaseConfig={
+const app=initializeApp({
 apiKey:"AIzaSyDUcWSbU-ELP7Erx9yGPbq65clsn2ME8pk",
 authDomain:"model-ai-727b1.firebaseapp.com",
 projectId:"model-ai-727b1"
-};
+});
 
-const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
 const provider=new GoogleAuthProvider();
 
-// Google Login
-window.googleLogin=()=>{
-signInWithPopup(auth,provider).catch(e=>alert(e.message));
-};
+window.googleLogin=()=>signInWithPopup(auth,provider);
 
-// Email Login
 window.emailLogin=()=>{
-const email=document.getElementById("email").value;
-const password=document.getElementById("password").value;
-signInWithEmailAndPassword(auth,email,password)
+signInWithEmailAndPassword(auth,email.value,password.value)
 .catch(e=>alert(e.message));
 };
 
-// Register
 window.registerUser=()=>{
-const email=document.getElementById("email").value;
-const password=document.getElementById("password").value;
-createUserWithEmailAndPassword(auth,email,password)
+createUserWithEmailAndPassword(auth,email.value,password.value)
 .catch(e=>alert(e.message));
 };
 
-// Logout
-window.logoutUser=()=>{
-signOut(auth);
-};
+window.logoutUser=()=>signOut(auth);
 
-// User State
 onAuthStateChanged(auth,user=>{
-document.getElementById("userInfo").innerHTML=
-user?`Logged in: ${user.email}`:"Not logged in";
+document.getElementById("userInfo").innerText=
+user?"Logged in: "+user.email:"Not logged in";
 });
 </script>
+  
 </body>
 </html>
