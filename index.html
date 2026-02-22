@@ -10,82 +10,188 @@
 crossorigin="anonymous"></script>
 
 <style>
-body{margin:0;font-family:Arial;background:#f5f7fb}
-header{background:#2563eb;color:#fff;padding:15px;font-size:22px;display:flex;justify-content:space-between}
-.container{max-width:1100px;margin:auto;padding:15px}
-.card{background:#fff;padding:15px;margin-bottom:20px;border-radius:10px}
-.blog-img{width:100%;border-radius:8px}
-.messages{height:300px;overflow:auto;margin-bottom:10px}
-.msg{padding:8px;margin:5px 0;border-radius:8px;max-width:80%}
-.user{background:#2563eb;color:#fff;margin-left:auto}
-.bot{background:#e5e7eb}
-.inputbar{display:flex;gap:8px}
-input{flex:1;padding:10px;border-radius:8px;border:1px solid #ccc}
-button{padding:10px;border:none;border-radius:8px;background:#2563eb;color:#fff;cursor:pointer}
-footer{background:#111;color:#fff;padding:20px;text-align:center}
+body{margin:0;font-family:Arial;background:#f4f6fb;display:flex}
 
+/* Sidebar */
 .sidebar{
-position:fixed;
-top:0;
-left:-300px;
 width:260px;
-height:100%;
-background:#fff;
-box-shadow:2px 0 10px rgba(0,0,0,0.2);
+background:#111827;
+color:white;
 padding:20px;
-transition:0.3s;
-z-index:1000
-}
-.sidebar.active{left:0}
-.overlay{
+min-height:100vh;
 position:fixed;
-top:0;
 left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.4);
-display:none;
-z-index:999
+top:0;
 }
-.overlay.show{display:block}
-.user-info{margin-top:10px;font-size:14px;color:#333}
+.sidebar h2{margin-top:0}
+.sidebar button{
+width:100%;
+margin-bottom:10px;
+padding:10px;
+background:#2563eb;
+border:none;
+border-radius:6px;
+color:white;
+cursor:pointer;
+}
+.user-info{font-size:14px;margin-top:10px}
+
+/* Main Content */
+.main{
+margin-left:260px;
+width:100%;
+padding:20px;
+}
+
+.card{
+background:white;
+padding:20px;
+margin-bottom:20px;
+border-radius:10px;
+box-shadow:0 2px 8px rgba(0,0,0,0.05)
+}
+
+.blog-img{
+width:100%;
+border-radius:8px;
+margin-bottom:10px;
+}
+
+.messages{
+height:300px;
+overflow-y:auto;
+margin-bottom:10px;
+}
+
+.msg{
+padding:8px;
+margin:5px 0;
+border-radius:8px;
+max-width:80%;
+}
+
+.user{
+background:#2563eb;
+color:white;
+margin-left:auto;
+}
+
+.bot{
+background:#e5e7eb;
+}
+
+.inputbar{
+display:flex;
+gap:8px;
+}
+
+input{
+flex:1;
+padding:10px;
+border-radius:6px;
+border:1px solid #ccc;
+}
+
+button{
+padding:10px;
+border:none;
+border-radius:6px;
+background:#2563eb;
+color:white;
+cursor:pointer;
+}
+
+footer{
+background:#111;
+color:white;
+padding:20px;
+text-align:center;
+margin-top:40px;
+}
 </style>
 </head>
 
 <body>
 
-<header>
-<span onclick="toggleSidebar()">☰ Menu</span>
-<span>Model AI</span>
-</header>
+<!-- SIDEBAR ALWAYS VISIBLE -->
+<div class="sidebar">
+<h2>Model AI</h2>
 
-<div class="sidebar" id="sidebar">
-<h3>Login</h3>
 <button onclick="googleLogin()">Login with Google</button>
 <button onclick="logout()">Logout</button>
 <div class="user-info" id="userInfo">Not logged in</div>
-<br>
-<button onclick="toggleSidebar()">Close</button>
 </div>
 
-<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+<div class="main">
 
-<div class="container">
+<!-- 10 FULL BLOGS -->
 
-<!-- BLOGS -->
+<script>
+const blogContent=[
+{
+title:"AI Tools for Students",
+img:"https://picsum.photos/900/400?1",
+text:"Artificial Intelligence tools help students learn faster, improve productivity, complete homework efficiently, generate notes and research ideas. AI tutors personalize learning experiences."
+},
+{
+title:"AI in Education",
+img:"https://picsum.photos/900/400?2",
+text:"AI transforms classrooms with automated grading, adaptive learning platforms and intelligent feedback systems."
+},
+{
+title:"Future of AI",
+img:"https://picsum.photos/900/400?3",
+text:"AI will reshape healthcare, robotics, space research, cybersecurity and automation."
+},
+{
+title:"AI Coding Guide",
+img:"https://picsum.photos/900/400?4",
+text:"Developers use AI for code generation, debugging, optimization and automation."
+},
+{
+title:"AI Productivity",
+img:"https://picsum.photos/900/400?5",
+text:"AI assistants manage tasks, schedules and communication efficiently."
+},
+{
+title:"AI Image Generation",
+img:"https://picsum.photos/900/400?6",
+text:"AI models generate realistic images, art and creative designs."
+},
+{
+title:"AI in Business",
+img:"https://picsum.photos/900/400?7",
+text:"Businesses use AI for marketing analytics, automation and customer engagement."
+},
+{
+title:"AI in Healthcare",
+img:"https://picsum.photos/900/400?8",
+text:"AI detects diseases early, assists doctors and manages medical data."
+},
+{
+title:"Earn Money with AI",
+img:"https://picsum.photos/900/400?9",
+text:"Freelancers use AI tools for content writing, coding, automation and design services."
+},
+{
+title:"Next Generation AI",
+img:"https://picsum.photos/900/400?10",
+text:"Next generation AI focuses on safer, smarter and ethical AI systems."
+}
+];
+
+blogContent.forEach(blog=>{
+document.write(`
 <div class="card">
-<h2>AI Tools for Students</h2>
-<img src="https://picsum.photos/900/400?1" class="blog-img">
-<p>AI helps students improve productivity, learning and research efficiency.</p>
+<h2>${blog.title}</h2>
+<img src="${blog.img}" class="blog-img">
+<p>${blog.text}</p>
 </div>
+`);
+});
+</script>
 
-<div class="card">
-<h2>Future of AI</h2>
-<img src="https://picsum.photos/900/400?2" class="blog-img">
-<p>AI will transform industries like healthcare, robotics and finance.</p>
-</div>
-
-<!-- MODEL AI CHAT -->
+<!-- AI CHAT -->
 <div class="card">
 <h2>Ask Model AI</h2>
 <div id="messages" class="messages"></div>
@@ -97,21 +203,23 @@ z-index:999
 </div>
 </div>
 
-</div>
-
 <footer>
 <h3>About Us</h3>
-<p>Model AI provides intelligent AI tools.</p>
+<p>Model AI provides intelligent AI tools for students and professionals worldwide.</p>
 <p>Terms & Conditions | Privacy Policy</p>
 </footer>
 
-<script>
-function toggleSidebar(){
-document.getElementById("sidebar").classList.toggle("active");
-document.getElementById("overlay").classList.toggle("show");
-}
+</div>
 
-// AI
+<script>
+// ENTER KEY FIX
+document.getElementById("input").addEventListener("keydown",function(e){
+if(e.key==="Enter"){
+sendMessage();
+}
+});
+
+// AI CONFIG
 const API_KEY="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";
 
 async function sendMessage(){
@@ -124,6 +232,7 @@ messages.innerHTML+=`<div class="msg user">${text}</div>`;
 input.value="";
 messages.innerHTML+=`<div class="msg bot" id="thinking">Thinking...</div>`;
 
+try{
 const res=await fetch("https://openrouter.ai/api/v1/chat/completions",{
 method:"POST",
 headers:{
@@ -141,8 +250,14 @@ document.getElementById("thinking").remove();
 const reply=data?.choices?.[0]?.message?.content||"AI not responding";
 messages.innerHTML+=`<div class="msg bot">${reply}</div>`;
 speak(reply);
+}catch{
+document.getElementById("thinking").innerText="Error";
 }
 
+messages.scrollTop=messages.scrollHeight;
+}
+
+// Voice Input
 function startVoice(){
 const rec=new(window.SpeechRecognition||window.webkitSpeechRecognition)();
 rec.lang="en-US";
@@ -152,6 +267,7 @@ document.getElementById("input").value=e.results[0][0].transcript;
 rec.start();
 }
 
+// Voice Output
 function speak(text){
 const speech=new SpeechSynthesisUtterance(text);
 speech.lang="en-US";
@@ -159,7 +275,7 @@ window.speechSynthesis.speak(speech);
 }
 </script>
 
-<!-- FIREBASE MODULE -->
+<!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } 
@@ -168,31 +284,19 @@ from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 const firebaseConfig = {
   apiKey: "AIzaSyDUcWSbU-ELP7Erx9yGPbq65clsn2ME8pk",
   authDomain: "model-ai-727b1.firebaseapp.com",
-  projectId: "model-ai-727b1",
-  storageBucket: "model-ai-727b1.firebasestorage.app",
-  messagingSenderId: "970799402645",
-  appId: "1:970799402645:web:4e2a93dbacbfd6ee97d59c",
-  measurementId: "G-0EW8BHNTH3"
+  projectId: "model-ai-727b1"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-window.googleLogin = function(){
-signInWithPopup(auth, provider);
-}
+window.googleLogin = ()=>signInWithPopup(auth,provider);
+window.logout = ()=>signOut(auth);
 
-window.logout = function(){
-signOut(auth);
-}
-
-onAuthStateChanged(auth,(user)=>{
-if(user){
-document.getElementById("userInfo").innerText="Logged in: "+user.email;
-}else{
-document.getElementById("userInfo").innerText="Not logged in";
-}
+onAuthStateChanged(auth,user=>{
+document.getElementById("userInfo").innerText=
+user? "Logged in: "+user.email:"Not logged in";
 });
 </script>
 
