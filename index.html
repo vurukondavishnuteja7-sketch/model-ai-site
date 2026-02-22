@@ -5,25 +5,58 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Model AI</title>
 
-<!-- ADSENSE AUTO ADS -->
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8731009230578197"
 crossorigin="anonymous"></script>
 
 <style>
-body{margin:0;font-family:Arial;background:#f4f6fb;display:flex}
+body{margin:0;font-family:Arial;background:#f4f6fb}
 
-/* Sidebar */
+/* HEADER */
+.header{
+background:#111827;
+color:white;
+text-align:center;
+padding:40px 20px;
+font-size:48px;
+font-weight:bold;
+letter-spacing:3px;
+}
+
+/* MENU */
+.menu-btn{
+position:fixed;
+top:20px;
+left:20px;
+background:#2563eb;
+color:white;
+padding:10px 15px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+z-index:1200;
+}
+
+/* SIDEBAR */
 .sidebar{
-width:260px;
+width:280px;
 background:#111827;
 color:white;
 padding:20px;
-min-height:100vh;
+height:100vh;
 position:fixed;
-left:0;
+left:-280px;
 top:0;
+transition:left 0.3s ease;
+z-index:1100;
 }
-.sidebar h2{margin-top:0}
+.sidebar.active{left:0}
+.sidebar input{
+width:100%;
+padding:8px;
+margin-bottom:10px;
+border-radius:5px;
+border:none;
+}
 .sidebar button{
 width:100%;
 margin-bottom:10px;
@@ -34,153 +67,114 @@ border-radius:6px;
 color:white;
 cursor:pointer;
 }
-.user-info{font-size:14px;margin-top:10px}
 
-/* Main Content */
-.main{
-margin-left:260px;
+/* OVERLAY */
+.overlay{
+position:fixed;
+top:0;
+left:0;
 width:100%;
-padding:20px;
+height:100%;
+background:rgba(0,0,0,0.5);
+display:none;
+z-index:1000;
 }
+.overlay.show{display:block}
 
+/* MAIN */
+.main{padding:20px;max-width:1100px;margin:auto}
+
+/* CARDS */
 .card{
 background:white;
 padding:20px;
-margin-bottom:20px;
+margin-bottom:25px;
 border-radius:10px;
-box-shadow:0 2px 8px rgba(0,0,0,0.05)
+box-shadow:0 2px 8px rgba(0,0,0,0.08);
 }
-
 .blog-img{
 width:100%;
 border-radius:8px;
-margin-bottom:10px;
+margin-bottom:15px;
 }
 
+/* CHAT */
 .messages{
 height:300px;
 overflow-y:auto;
 margin-bottom:10px;
+border:1px solid #ddd;
+padding:10px;
+border-radius:8px;
+background:#fafafa;
 }
-
 .msg{
 padding:8px;
 margin:5px 0;
 border-radius:8px;
 max-width:80%;
 }
+.user{background:#2563eb;color:white;margin-left:auto}
+.bot{background:#e5e7eb}
 
-.user{
-background:#2563eb;
-color:white;
-margin-left:auto;
-}
-
-.bot{
-background:#e5e7eb;
-}
-
-.inputbar{
-display:flex;
-gap:8px;
-}
-
-input{
+.inputbar{display:flex;gap:8px}
+input[type="text"]{
 flex:1;
 padding:10px;
 border-radius:6px;
 border:1px solid #ccc;
 }
+button{padding:10px;border:none;border-radius:6px;background:#2563eb;color:white;cursor:pointer}
 
-button{
-padding:10px;
-border:none;
-border-radius:6px;
-background:#2563eb;
-color:white;
-cursor:pointer;
-}
-
+/* FOOTER */
 footer{
 background:#111;
 color:white;
-padding:20px;
+padding:40px 20px;
 text-align:center;
-margin-top:40px;
+margin-top:50px;
+font-size:14px;
+line-height:1.8;
 }
+footer a{color:#4da3ff;text-decoration:none;margin:0 8px;}
+footer a:hover{text-decoration:underline}
 </style>
 </head>
 
 <body>
 
-<!-- SIDEBAR ALWAYS VISIBLE -->
-<div class="sidebar">
-<h2>Model AI</h2>
+<button class="menu-btn" onclick="toggleSidebar()">☰</button>
 
-<button onclick="googleLogin()">Login with Google</button>
-<button onclick="logout()">Logout</button>
-<div class="user-info" id="userInfo">Not logged in</div>
+<div class="header">MODEL AI</div>
+
+<div class="sidebar" id="sidebar">
+<h2>Login</h2>
+<button>Login with Google</button>
+<input type="email" placeholder="Email (UI only)">
+<input type="password" placeholder="Password (UI only)">
+<button>Email Login</button>
+<button onclick="toggleSidebar()">Close</button>
 </div>
+
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
 
 <div class="main">
 
-<!-- 10 FULL BLOGS -->
-
 <script>
-const blogContent=[
-{
-title:"AI Tools for Students",
-img:"https://picsum.photos/900/400?1",
-text:"Artificial Intelligence tools help students learn faster, improve productivity, complete homework efficiently, generate notes and research ideas. AI tutors personalize learning experiences."
-},
-{
-title:"AI in Education",
-img:"https://picsum.photos/900/400?2",
-text:"AI transforms classrooms with automated grading, adaptive learning platforms and intelligent feedback systems."
-},
-{
-title:"Future of AI",
-img:"https://picsum.photos/900/400?3",
-text:"AI will reshape healthcare, robotics, space research, cybersecurity and automation."
-},
-{
-title:"AI Coding Guide",
-img:"https://picsum.photos/900/400?4",
-text:"Developers use AI for code generation, debugging, optimization and automation."
-},
-{
-title:"AI Productivity",
-img:"https://picsum.photos/900/400?5",
-text:"AI assistants manage tasks, schedules and communication efficiently."
-},
-{
-title:"AI Image Generation",
-img:"https://picsum.photos/900/400?6",
-text:"AI models generate realistic images, art and creative designs."
-},
-{
-title:"AI in Business",
-img:"https://picsum.photos/900/400?7",
-text:"Businesses use AI for marketing analytics, automation and customer engagement."
-},
-{
-title:"AI in Healthcare",
-img:"https://picsum.photos/900/400?8",
-text:"AI detects diseases early, assists doctors and manages medical data."
-},
-{
-title:"Earn Money with AI",
-img:"https://picsum.photos/900/400?9",
-text:"Freelancers use AI tools for content writing, coding, automation and design services."
-},
-{
-title:"Next Generation AI",
-img:"https://picsum.photos/900/400?10",
-text:"Next generation AI focuses on safer, smarter and ethical AI systems."
-}
+const blogs=[
+{title:"AI Tools for Students",img:"https://images.unsplash.com/photo-1581091215367-59ab6b0b7c5a",text:"AI tools help students improve productivity and personalize learning experiences."},
+{title:"AI in Education",img:"https://images.unsplash.com/photo-1509062522246-3755977927d7",text:"AI enables automated grading and intelligent classrooms."},
+{title:"Future of AI",img:"https://images.unsplash.com/photo-1504384308090-c894fdcc538d",text:"AI will transform healthcare, robotics and finance."},
+{title:"AI Coding Assistants",img:"https://images.unsplash.com/photo-1518779578993-ec3579fee39f",text:"AI helps generate and debug code faster."},
+{title:"AI Productivity Tools",img:"https://images.unsplash.com/photo-1556761175-4b46a572b786",text:"AI automates repetitive tasks."},
+{title:"AI Image Generation",img:"https://images.unsplash.com/photo-1542751110-97427bbecf20",text:"AI creates realistic images and artwork."},
+{title:"AI in Business",img:"https://images.unsplash.com/photo-1551434678-e076c223a692",text:"Companies use AI for automation."},
+{title:"AI in Healthcare",img:"https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b",text:"AI assists medical diagnosis."},
+{title:"Earn Money with AI",img:"https://images.unsplash.com/photo-1563013544-824ae1b704d3",text:"Freelancers earn using AI tools."},
+{title:"Next Generation AI",img:"https://images.unsplash.com/photo-1519389950473-47ba0277781c",text:"Advanced AI focuses on ethics and safety."}
 ];
 
-blogContent.forEach(blog=>{
+blogs.forEach(blog=>{
 document.write(`
 <div class="card">
 <h2>${blog.title}</h2>
@@ -191,46 +185,56 @@ document.write(`
 });
 </script>
 
-<!-- AI CHAT -->
 <div class="card">
 <h2>Ask Model AI</h2>
 <div id="messages" class="messages"></div>
 
 <div class="inputbar">
-<input id="input" placeholder="Ask anything...">
+<input type="text" id="input" placeholder="Ask anything...">
 <button onclick="startVoice()">🎤</button>
 <button onclick="sendMessage()">Send</button>
 </div>
 </div>
 
-<footer>
-<h3>About Us</h3>
-<p>Model AI provides intelligent AI tools for students and professionals worldwide.</p>
-<p>Terms & Conditions | Privacy Policy</p>
-</footer>
-
 </div>
 
+<footer>
+<p>© 2026 MODEL AI. All Rights Reserved.</p>
+<a href="#">About Us</a> |
+<a href="#">Terms</a> |
+<a href="#">Privacy Policy</a> |
+<a href="#">Disclaimer</a> |
+<a href="#">Contact</a>
+</footer>
+
 <script>
-// ENTER KEY FIX
+function toggleSidebar(){
+const sidebar=document.getElementById("sidebar");
+const overlay=document.getElementById("overlay");
+
+sidebar.classList.toggle("active");
+overlay.classList.toggle("show");
+}
+
+const API_KEY="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";
+
 document.getElementById("input").addEventListener("keydown",function(e){
 if(e.key==="Enter"){
+e.preventDefault();
 sendMessage();
 }
 });
-
-// AI CONFIG
-const API_KEY="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";
 
 async function sendMessage(){
 const input=document.getElementById("input");
 const messages=document.getElementById("messages");
 const text=input.value.trim();
-if(!text)return;
+if(!text) return;
 
 messages.innerHTML+=`<div class="msg user">${text}</div>`;
 input.value="";
 messages.innerHTML+=`<div class="msg bot" id="thinking">Thinking...</div>`;
+messages.scrollTop=messages.scrollHeight;
 
 try{
 const res=await fetch("https://openrouter.ai/api/v1/chat/completions",{
@@ -244,60 +248,34 @@ model:"openai/gpt-3.5-turbo",
 messages:[{role:"user",content:text}]
 })
 });
-
 const data=await res.json();
 document.getElementById("thinking").remove();
 const reply=data?.choices?.[0]?.message?.content||"AI not responding";
 messages.innerHTML+=`<div class="msg bot">${reply}</div>`;
+messages.scrollTop=messages.scrollHeight;
 speak(reply);
 }catch{
-document.getElementById("thinking").innerText="Error";
+document.getElementById("thinking").innerText="Server Error";
+}
 }
 
-messages.scrollTop=messages.scrollHeight;
-}
-
-// Voice Input
 function startVoice(){
-const rec=new(window.SpeechRecognition||window.webkitSpeechRecognition)();
+const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+if(!SpeechRecognition){alert("Voice not supported");return;}
+const rec=new SpeechRecognition();
 rec.lang="en-US";
+rec.start();
 rec.onresult=e=>{
 document.getElementById("input").value=e.results[0][0].transcript;
 };
-rec.start();
 }
 
-// Voice Output
 function speak(text){
-const speech=new SpeechSynthesisUtterance(text);
-speech.lang="en-US";
-window.speechSynthesis.speak(speech);
+if("speechSynthesis" in window){
+speechSynthesis.cancel();
+speechSynthesis.speak(new SpeechSynthesisUtterance(text));
 }
-</script>
-
-<!-- FIREBASE -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } 
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDUcWSbU-ELP7Erx9yGPbq65clsn2ME8pk",
-  authDomain: "model-ai-727b1.firebaseapp.com",
-  projectId: "model-ai-727b1"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const provider = new GoogleAuthProvider();
-
-window.googleLogin = ()=>signInWithPopup(auth,provider);
-window.logout = ()=>signOut(auth);
-
-onAuthStateChanged(auth,user=>{
-document.getElementById("userInfo").innerText=
-user? "Logged in: "+user.email:"Not logged in";
-});
+}
 </script>
 
 </body>
