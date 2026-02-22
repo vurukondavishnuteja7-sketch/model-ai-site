@@ -37,34 +37,26 @@ cursor:pointer;
 z-index:2000;
 }
 
-/* SIDEBAR WHITE */
-.sidebar{
-width:300px;
-background:#ffffff;
-color:#111;
-padding:25px;
-height:100vh;
-position:fixed;
-left:-320px;
-top:0;
-transition:0.3s ease;
-z-index:1500;
-box-shadow:3px 0 15px rgba(0,0,0,0.2);
-}
-.sidebar.active{left:0}
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+<h2>Login</h2>
 
-.sidebar h2{color:#2563eb;margin-top:0}
+<button onclick="googleLogin()">Login with Google</button>
 
-.sidebar button{
-width:100%;
-margin-bottom:10px;
-padding:10px;
-background:#2563eb;
-border:none;
-border-radius:6px;
-color:white;
-cursor:pointer;
-}
+<input type="email" id="email" placeholder="Enter Email">
+<input type="password" id="password" placeholder="Enter Password">
+
+<button onclick="emailLogin()">Login</button>
+<button onclick="registerUser()">Register</button>
+
+<div id="userInfo" style="margin-top:10px;font-size:14px;">
+Not logged in
+</div>
+
+<button onclick="logoutUser()">Logout</button>
+
+<button onclick="toggleSidebar()">Close</button>
+</div>
 
 /* OVERLAY */
 .overlay{
@@ -329,7 +321,60 @@ function goBack(){
 document.getElementById("legalPage").style.display="none";
 document.getElementById("mainContent").style.display="block";
 }
-</script>
 
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+getAuth,
+GoogleAuthProvider,
+signInWithPopup,
+createUserWithEmailAndPassword,
+signInWithEmailAndPassword,
+signOut,
+onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const firebaseConfig={
+apiKey:"AIzaSyDUcWSbU-ELP7Erx9yGPbq65clsn2ME8pk",
+authDomain:"model-ai-727b1.firebaseapp.com",
+projectId:"model-ai-727b1"
+};
+
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const provider=new GoogleAuthProvider();
+
+// Google Login
+window.googleLogin=()=>{
+signInWithPopup(auth,provider).catch(e=>alert(e.message));
+};
+
+// Email Login
+window.emailLogin=()=>{
+const email=document.getElementById("email").value;
+const password=document.getElementById("password").value;
+signInWithEmailAndPassword(auth,email,password)
+.catch(e=>alert(e.message));
+};
+
+// Register
+window.registerUser=()=>{
+const email=document.getElementById("email").value;
+const password=document.getElementById("password").value;
+createUserWithEmailAndPassword(auth,email,password)
+.catch(e=>alert(e.message));
+};
+
+// Logout
+window.logoutUser=()=>{
+signOut(auth);
+};
+
+// User State
+onAuthStateChanged(auth,user=>{
+document.getElementById("userInfo").innerHTML=
+user?`Logged in: ${user.email}`:"Not logged in";
+});
+</script>
 </body>
 </html>
