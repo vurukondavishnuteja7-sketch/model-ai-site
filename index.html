@@ -1,206 +1,198 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Model AI</title>
 
-<!-- ADSENSE -->
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8731009230578197" crossorigin="anonymous"></script>
+<!-- ADSENSE AUTO ADS -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8731009230578197"
+crossorigin="anonymous"></script>
 
 <style>
 body{margin:0;font-family:Arial;background:#f5f7fb}
-.header{text-align:center;padding:25px;font-size:30px;font-weight:bold;color:#2563eb;background:#fff}
-
-/* SIDEBAR */
-.menuBtn{position:fixed;top:15px;left:15px;z-index:1001;background:#2563eb;color:#fff;border:none;padding:10px 14px;border-radius:8px;cursor:pointer}
-.sidebar{width:260px;background:#fff;border-right:1px solid #e5e7eb;padding:20px;position:fixed;top:0;left:0;height:100vh;transform:translateX(-100%);transition:.3s;z-index:1000;overflow:auto}
-.sidebar.show{transform:translateX(0)}
-.overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.4);display:none;z-index:999}
-.overlay.show{display:block}
-
-.container{max-width:900px;margin:auto;padding:20px}
-.card{background:#fff;padding:20px;border-radius:12px;margin-bottom:20px}
-
-.blog-img{width:100%;border-radius:10px;margin-bottom:10px}
-.blog-text{line-height:1.8;color:#333}
-
-.messages{height:300px;overflow:auto;margin:10px 0}
-.msg{padding:10px;border-radius:10px;margin:5px 0;max-width:80%}
+header{background:#2563eb;color:#fff;padding:15px;font-size:22px;display:flex;justify-content:space-between}
+.container{max-width:1100px;margin:auto;padding:15px}
+.card{background:#fff;padding:15px;margin-bottom:20px;border-radius:10px}
+.blog-img{width:100%;border-radius:8px}
+.messages{height:300px;overflow:auto;margin-bottom:10px}
+.msg{padding:8px;margin:5px 0;border-radius:8px;max-width:80%}
 .user{background:#2563eb;color:#fff;margin-left:auto}
 .bot{background:#e5e7eb}
+.inputbar{display:flex;gap:8px}
+input{flex:1;padding:10px;border-radius:8px;border:1px solid #ccc}
+button{padding:10px;border:none;border-radius:8px;background:#2563eb;color:#fff;cursor:pointer}
+footer{background:#111;color:#fff;padding:20px;text-align:center}
 
-.inputbar{display:flex;gap:10px}
-#input{flex:1;padding:12px;border-radius:10px;border:1px solid #ccc}
-button{padding:12px 16px;border:none;border-radius:10px;background:#2563eb;color:#fff;cursor:pointer}
-
-.footer{text-align:center;padding:25px;background:#fff;margin-top:40px;font-size:14px}
-.footer a{color:#2563eb;text-decoration:none;margin:0 8px;font-weight:bold}
+.sidebar{
+position:fixed;
+top:0;
+left:-300px;
+width:260px;
+height:100%;
+background:#fff;
+box-shadow:2px 0 10px rgba(0,0,0,0.2);
+padding:20px;
+transition:0.3s;
+z-index:1000
+}
+.sidebar.active{left:0}
+.overlay{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.4);
+display:none;
+z-index:999
+}
+.overlay.show{display:block}
+.user-info{margin-top:10px;font-size:14px;color:#333}
 </style>
-
-<!-- FIREBASE -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 </head>
 
 <body>
 
-<!-- MENU -->
-<button class="menuBtn" onclick="toggleSidebar()">☰</button>
-<div id="overlay" class="overlay" onclick="toggleSidebar()"></div>
+<header>
+<span onclick="toggleSidebar()">☰ Menu</span>
+<span>Model AI</span>
+</header>
 
-<!-- SIDEBAR -->
-<div id="sidebar" class="sidebar">
-<h2>Model AI</h2>
-<button onclick="login()">Login with Google</button>
+<div class="sidebar" id="sidebar">
+<h3>Login</h3>
+<button onclick="googleLogin()">Login with Google</button>
 <button onclick="logout()">Logout</button>
-<p id="user">Not logged in</p>
+<div class="user-info" id="userInfo">Not logged in</div>
+<br>
+<button onclick="toggleSidebar()">Close</button>
 </div>
 
-<div class="header">Model AI</div>
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
 
 <div class="container">
 
 <!-- BLOGS -->
-<script>
-const blogs=[
-"AI Tools for Students","AI Homework Help","ChatGPT Alternatives",
-"AI Coding Guide","Future of AI","AI Image Generation",
-"AI Productivity","Earn Money Using AI","AI in Education","Next-Gen AI Technology"
-];
-
-document.write(
-blogs.map((t,i)=>`
 <div class="card">
-<img src="https://picsum.photos/900/400?random=${i}" class="blog-img">
-<h2>${t}</h2>
-<p class="blog-text">
-Artificial Intelligence is rapidly transforming education, careers, business, and daily life.
-Learning AI today opens powerful opportunities in freelancing, remote jobs, startups, and global tech careers.
-People who master AI will lead the future digital world.
-</p>
-</div>
-`).join("")
-);
-</script>
-
-<!-- ADSENSE -->
-<div class="card" style="text-align:center">
-<ins class="adsbygoogle"
-style="display:block"
-data-ad-client="ca-pub-8731009230578197"
-data-ad-slot="1234567890"
-data-ad-format="auto"
-data-full-width-responsive="true"></ins>
-<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
+<h2>AI Tools for Students</h2>
+<img src="https://picsum.photos/900/400?1" class="blog-img">
+<p>AI helps students improve productivity, learning and research efficiency.</p>
 </div>
 
-<!-- AI CHAT -->
+<div class="card">
+<h2>Future of AI</h2>
+<img src="https://picsum.photos/900/400?2" class="blog-img">
+<p>AI will transform industries like healthcare, robotics and finance.</p>
+</div>
+
+<!-- MODEL AI CHAT -->
 <div class="card">
 <h2>Ask Model AI</h2>
 <div id="messages" class="messages"></div>
 
 <div class="inputbar">
-<input id="input" placeholder="Ask anything..." />
-<button id="voiceBtn">🎤</button>
-<button id="sendBtn">Send</button>
+<input id="input" placeholder="Ask anything...">
+<button onclick="startVoice()">🎤</button>
+<button onclick="sendMessage()">Send</button>
 </div>
 </div>
 
 </div>
 
-<!-- FOOTER -->
-<div class="footer">
-© 2026 Model AI • All rights reserved.<br><br>
-<a href="/about.html">About</a> |
-<a href="/contact.html">Contact</a> |
-<a href="/privacy-policy.html">Privacy Policy</a> |
-<a href="/terms.html">Terms & Conditions</a>
-</div>
+<footer>
+<h3>About Us</h3>
+<p>Model AI provides intelligent AI tools.</p>
+<p>Terms & Conditions | Privacy Policy</p>
+</footer>
 
 <script>
-/* SIDEBAR */
 function toggleSidebar(){
-document.getElementById("sidebar").classList.toggle("show");
+document.getElementById("sidebar").classList.toggle("active");
 document.getElementById("overlay").classList.toggle("show");
 }
 
-/* FIREBASE */
-firebase.initializeApp({
-apiKey:"AIzaSyDUcWSbU-ELP7Erx9yGPbq65clsn2ME8pk",
-authDomain:"model-ai-727b1.firebaseapp.com",
-projectId:"model-ai-727b1"
-});
+// AI
+const API_KEY="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";
 
-const auth=firebase.auth();
-const userText=document.getElementById("user");
-
-function login(){
-const provider=new firebase.auth.GoogleAuthProvider();
-auth.signInWithPopup(provider).catch(e=>alert(e.message));
-}
-function logout(){auth.signOut();}
-
-auth.onAuthStateChanged(u=>{
-userText.innerText=u ? "👤 "+u.email : "Not logged in";
-});
-
-/* CHAT */
+async function sendMessage(){
 const input=document.getElementById("input");
 const messages=document.getElementById("messages");
-const sendBtn=document.getElementById("sendBtn");
-const voiceBtn=document.getElementById("voiceBtn");
-
-function addMsg(text,type){
-const div=document.createElement("div");
-div.className="msg "+type;
-div.innerText=text;
-messages.appendChild(div);
-messages.scrollTop=messages.scrollHeight;
-}
-
-/* ✅ FIXED AI (WORKING) */
-async function sendMsg(){
 const text=input.value.trim();
-if(!text) return;
+if(!text)return;
 
-addMsg(text,"user");
+messages.innerHTML+=`<div class="msg user">${text}</div>`;
 input.value="";
-addMsg("Thinking...","bot");
+messages.innerHTML+=`<div class="msg bot" id="thinking">Thinking...</div>`;
 
-try{
-const res = await fetch("https://api.popcat.xyz/chatbot?msg=" + encodeURIComponent(text));
-const data = await res.json();
-const reply = data.response || "AI not responding.";
-
-messages.lastChild.innerText = reply;
-
-/* TEXT SPEECH */
-if("speechSynthesis" in window){
-speechSynthesis.cancel();
-speechSynthesis.speak(new SpeechSynthesisUtterance(reply));
-}
-
-}catch{
-messages.lastChild.innerText="AI server error. Try again.";
-}
-}
-
-sendBtn.addEventListener("click",sendMsg);
-
-input.addEventListener("keydown",e=>{
-if(e.key==="Enter") sendMsg();
+const res=await fetch("https://openrouter.ai/api/v1/chat/completions",{
+method:"POST",
+headers:{
+"Authorization":"Bearer "+API_KEY,
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+model:"openai/gpt-3.5-turbo",
+messages:[{role:"user",content:text}]
+})
 });
 
-/* VOICE */
-voiceBtn.addEventListener("click",()=>{
-const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
-if(!SpeechRecognition){alert("Voice not supported");return;}
+const data=await res.json();
+document.getElementById("thinking").remove();
+const reply=data?.choices?.[0]?.message?.content||"AI not responding";
+messages.innerHTML+=`<div class="msg bot">${reply}</div>`;
+speak(reply);
+}
 
-const rec=new SpeechRecognition();
+function startVoice(){
+const rec=new(window.SpeechRecognition||window.webkitSpeechRecognition)();
 rec.lang="en-US";
+rec.onresult=e=>{
+document.getElementById("input").value=e.results[0][0].transcript;
+};
 rec.start();
-rec.onresult=e=>{input.value=e.results[0][0].transcript;}
+}
+
+function speak(text){
+const speech=new SpeechSynthesisUtterance(text);
+speech.lang="en-US";
+window.speechSynthesis.speak(speech);
+}
+</script>
+
+<!-- FIREBASE MODULE -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } 
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDUcWSbU-ELP7Erx9yGPbq65clsn2ME8pk",
+  authDomain: "model-ai-727b1.firebaseapp.com",
+  projectId: "model-ai-727b1",
+  storageBucket: "model-ai-727b1.firebasestorage.app",
+  messagingSenderId: "970799402645",
+  appId: "1:970799402645:web:4e2a93dbacbfd6ee97d59c",
+  measurementId: "G-0EW8BHNTH3"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+
+window.googleLogin = function(){
+signInWithPopup(auth, provider);
+}
+
+window.logout = function(){
+signOut(auth);
+}
+
+onAuthStateChanged(auth,(user)=>{
+if(user){
+document.getElementById("userInfo").innerText="Logged in: "+user.email;
+}else{
+document.getElementById("userInfo").innerText="Not logged in";
+}
 });
 </script>
 
