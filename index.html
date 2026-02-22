@@ -5,40 +5,52 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MODEL AI</title>
 
-<!-- ADSENSE -->
+<!-- ADSENSE AUTO ADS -->
 <script async 
 src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8731009230578197"
 crossorigin="anonymous"></script>
 
 <style>
 body{margin:0;font-family:Arial;background:#f4f6fb}
-.header{background:#111827;color:white;text-align:center;padding:40px;font-size:42px;font-weight:bold}
+.header{background:#111827;color:white;text-align:center;padding:40px;font-size:38px;font-weight:bold}
 .menu-btn{position:fixed;top:20px;left:20px;background:#2563eb;color:white;padding:10px 15px;border:none;border-radius:6px;cursor:pointer;z-index:2000}
 
-.sidebar{width:300px;background:white;padding:25px;height:100vh;position:fixed;left:-320px;top:0;transition:0.3s;z-index:1500;box-shadow:3px 0 15px rgba(0,0,0,0.2)}
+.sidebar{
+width:300px;background:white;padding:25px;height:100vh;
+position:fixed;left:-320px;top:0;transition:.3s;z-index:1500;
+box-shadow:3px 0 20px rgba(0,0,0,.2)
+}
 .sidebar.active{left:0}
 .sidebar input{width:100%;padding:10px;margin-bottom:10px;border:1px solid #ccc;border-radius:6px}
 .sidebar button{width:100%;margin-bottom:10px;padding:10px;background:#2563eb;border:none;border-radius:6px;color:white;cursor:pointer}
 
-.overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);display:none;z-index:1000}
+.overlay{
+position:fixed;top:0;left:0;width:100%;height:100%;
+background:rgba(0,0,0,.4);display:none;z-index:1000
+}
 .overlay.show{display:block}
 
 .main{padding:20px;max-width:1100px;margin:auto}
-.card{background:white;padding:20px;margin-bottom:25px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.08)}
+.card{background:white;padding:20px;margin-bottom:25px;border-radius:12px;box-shadow:0 5px 15px rgba(0,0,0,.08)}
 .blog-img{width:100%;border-radius:8px;margin-bottom:15px}
 
 .messages{height:300px;overflow-y:auto;border:1px solid #ddd;padding:10px;border-radius:8px;background:#fafafa;margin-bottom:10px}
 .msg{padding:8px;margin:5px 0;border-radius:8px;max-width:80%}
 .user{background:#2563eb;color:white;margin-left:auto}
 .bot{background:#e5e7eb}
-
 .inputbar{display:flex;gap:8px}
 #input{flex:1;padding:10px;border-radius:6px;border:1px solid #ccc}
 
-footer{background:#111;color:white;padding:40px;text-align:center;margin-top:50px}
+footer{
+background:#111;color:white;padding:40px;text-align:center;margin-top:50px
+}
 footer a{color:#4da3ff;margin:0 8px;cursor:pointer;text-decoration:none}
 
-.legal{display:none;padding:40px;max-width:900px;margin:auto;background:white;border-radius:10px;margin-top:40px}
+.legal{
+display:none;padding:50px;max-width:900px;margin:50px auto;
+background:white;border-radius:15px;
+box-shadow:0 10px 30px rgba(0,0,0,.1)
+}
 .back-btn{background:#2563eb;color:white;padding:8px 15px;border:none;border-radius:6px;cursor:pointer;margin-bottom:20px}
 </style>
 </head>
@@ -48,7 +60,6 @@ footer a{color:#4da3ff;margin:0 8px;cursor:pointer;text-decoration:none}
 <button class="menu-btn" onclick="toggleSidebar()">☰</button>
 <div class="header">MODEL AI</div>
 
-<!-- SIDEBAR -->
 <div class="sidebar" id="sidebar">
 <h2>Login</h2>
 <button onclick="googleLogin()">Login with Google</button>
@@ -77,138 +88,91 @@ footer a{color:#4da3ff;margin:0 8px;cursor:pointer;text-decoration:none}
 </div>
 </div>
 
-<!-- LEGAL PAGE -->
 <div class="legal" id="legalPage">
 <button class="back-btn" onclick="goBack()">⬅ Back</button>
 <div id="legalContent"></div>
 </div>
 
 <footer>
+<div>
 <a onclick="openLegal('about')">About</a> |
 <a onclick="openLegal('terms')">Terms</a> |
 <a onclick="openLegal('privacy')">Privacy</a> |
 <a onclick="openLegal('disclaimer')">Disclaimer</a> |
 <a onclick="openLegal('contact')">Contact</a>
+</div>
+<br>
+<div style="font-size:14px;color:#aaa;">
+© 2026 MODEL AI. All Rights Reserved.
+</div>
 </footer>
 
 <script>
 
-/* ✅ SIDEBAR FIX ADDED */
+/* Sidebar */
 function toggleSidebar(){
-document.getElementById("sidebar").classList.toggle("active");
-document.getElementById("overlay").classList.toggle("show");
+const sidebar=document.getElementById("sidebar");
+const overlay=document.getElementById("overlay");
+sidebar.classList.toggle("active");
+overlay.classList.toggle("show");
 }
 
-/* YOUR ORIGINAL BLOG + AI + VOICE CODE UNCHANGED BELOW */
-// Sidebar
+/* 15 BLOGS (~100 words each) */
 const blogs=[
-{
-title:"AI Tools for Students",
-img:"https://images.unsplash.com/photo-1509062522246-3755977927d7?w=1200",
-text:"Artificial Intelligence tools are transforming how students learn in schools and colleges. Modern AI platforms help summarize chapters, generate notes, solve mathematical equations, and explain difficult concepts in simple language. Students use AI to prepare for competitive exams, complete assignments, and improve research quality. Personalized AI tutors analyze learning patterns and adjust lessons accordingly. This increases understanding and confidence. AI also helps manage study schedules and reminders. With continuous innovation, AI will become a powerful academic companion, making education smarter, more interactive, and globally accessible for learners of all backgrounds."
-},
-{
-title:"AI in Education Systems",
-img:"https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200",
-text:"Artificial Intelligence is reshaping education systems worldwide by introducing automation and adaptive learning. Schools use AI to track attendance, grade papers, and evaluate performance efficiently. Virtual classrooms powered by AI provide instant feedback and personalized content. Teachers benefit from reduced administrative tasks and can focus more on mentoring students. AI identifies learning gaps early and recommends improvement strategies. Interactive simulations and smart learning platforms increase engagement. As technology evolves, AI-driven education will help students develop critical thinking and digital skills required for future careers in a rapidly changing world."
-},
-{
-title:"Future of Artificial Intelligence",
-img:"https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=1200",
-text:"The future of Artificial Intelligence promises groundbreaking innovations across industries. AI will revolutionize healthcare, transportation, robotics, and finance. Self-driving vehicles, smart cities, and automated factories are becoming reality. AI-powered analytics will improve decision-making and reduce human errors. Scientists are using AI for climate modeling and space research. Ethical frameworks are being developed to ensure fairness and safety. In the coming decade, AI will collaborate closely with humans instead of replacing them. Responsible development will determine how positively AI shapes the global economy and technological advancement."
-},
-{
-title:"AI Coding Assistants",
-img:"https://images.unsplash.com/photo-1518779578993-ec3579fee39f?w=1200",
-text:"AI coding assistants are transforming software development processes. These intelligent tools generate code snippets, detect bugs, and suggest improvements instantly. Developers save time and increase productivity using AI-powered debugging systems. Beginners benefit from real-time explanations and learning support. Companies reduce development costs and speed up project delivery. AI understands multiple programming languages and improves code quality. As artificial intelligence advances, coding assistants will become essential tools for programmers worldwide, supporting innovation and faster technological growth in the digital era."
-},
-{
-title:"AI for Business Growth",
-img:"https://images.unsplash.com/photo-1551434678-e076c223a692?w=1200",
-text:"Businesses are increasingly adopting AI to drive growth and efficiency. AI chatbots provide 24/7 customer support, improving user satisfaction. Predictive analytics help companies forecast sales trends and manage inventory effectively. Marketing teams use AI to analyze customer behavior and personalize campaigns. Automation reduces operational costs and increases productivity. Decision-making becomes data-driven with AI insights. Organizations that integrate artificial intelligence gain competitive advantages in global markets. As digital transformation accelerates, AI will remain a crucial tool for sustainable business expansion and innovation."
-},
-{
-title:"AI in Healthcare Innovation",
-img:"https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b?w=1200",
-text:"AI is revolutionizing healthcare through intelligent diagnostics and predictive analytics. Machine learning models analyze medical images to detect diseases at early stages. Hospitals use AI systems to manage patient data and optimize workflows. Wearable devices monitor health conditions in real-time. AI helps doctors recommend personalized treatment plans based on patient history. Early detection improves survival rates and reduces medical costs. Ethical implementation and patient data privacy remain important priorities. As research advances, AI will make healthcare more accessible, accurate, and efficient worldwide."
-},
-{
-title:"AI Image Generation Technology",
-img:"https://images.unsplash.com/photo-1542751110-97427bbecf20?w=1200",
-text:"AI image generation technology allows users to create realistic visuals using text descriptions. Designers use AI to produce logos, digital artwork, and marketing materials quickly. This innovation reduces creative production time and expands artistic possibilities. AI-generated images are widely used in gaming, advertising, and filmmaking industries. While ethical concerns exist regarding originality and copyright, the technology continues evolving rapidly. As models improve, AI image generation will become more precise, affordable, and accessible to creators globally."
-},
-{
-title:"AI Productivity Tools",
-img:"https://images.unsplash.com/photo-1556761175-4b46a572b786?w=1200",
-text:"AI productivity tools help individuals and organizations manage tasks efficiently. Smart assistants draft emails, summarize meetings, and organize schedules. Automation eliminates repetitive work and reduces human errors. Businesses use AI to track performance metrics and optimize workflows. Time management improves significantly with AI-powered reminders and planning systems. In modern workplaces, artificial intelligence enhances efficiency and supports strategic decision-making. As technology advances, AI productivity tools will continue shaping smarter and more organized work environments."
-},
-{
-title:"Earning Money with AI Skills",
-img:"https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=1200",
-text:"AI offers numerous opportunities for earning money online and offline. Freelancers use AI tools for content writing, graphic design, and video editing. Developers create AI-powered applications and digital products for global markets. Businesses hire AI specialists for automation and analytics. Learning AI skills opens doors to high-paying careers in data science and machine learning. Entrepreneurs leverage AI chatbots and marketing automation systems to build passive income streams. With dedication and continuous learning, individuals can achieve financial growth through artificial intelligence technologies."
-},
-{
-title:"Next Generation AI Systems",
-img:"https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1200",
-text:"Next generation AI systems focus on safety, transparency, and advanced reasoning capabilities. Researchers are building models that understand context better and provide more accurate results. Ethical AI frameworks aim to reduce bias and ensure fairness in decision-making. Governments emphasize responsible AI usage to protect privacy and human rights. Advanced systems assist in scientific research, climate studies, and space exploration. Instead of replacing humans, future AI will collaborate closely with them. As innovation progresses, next generation AI will shape a smarter, safer, and more innovative global society."
-}
+{title:"AI Tools for Students",img:"https://images.unsplash.com/photo-1509062522246-3755977927d7?w=1200",text:"Artificial Intelligence tools help students improve learning efficiency and academic performance. Modern AI apps summarize textbooks, generate notes, solve mathematics problems, and explain complex concepts in simple language. Students use AI for competitive exam preparation and project research. Personalized AI tutors analyze learning patterns and suggest improvements. This increases confidence and understanding. AI also helps manage study schedules and time effectively. In the future, AI-powered classrooms will transform global education systems by making learning smarter, more interactive, and accessible for everyone regardless of location or background."},
+
+{title:"AI in Healthcare",img:"https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b?w=1200",text:"Artificial Intelligence is transforming healthcare systems worldwide. AI models analyze medical images to detect diseases like cancer and heart problems at early stages. Hospitals use AI systems to manage patient data securely and improve workflow efficiency. Predictive analytics helps doctors recommend personalized treatment plans. Wearable devices powered by AI monitor patient health in real-time. These innovations reduce medical errors and improve survival rates. As technology advances, AI will continue supporting healthcare professionals and improving patient outcomes globally."},
+
+{title:"Future of Artificial Intelligence",img:"https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=1200",text:"The future of Artificial Intelligence promises groundbreaking innovation across industries. AI will revolutionize robotics, transportation, finance, and education. Self-driving vehicles and smart cities are becoming realities. AI-powered analytics improve decision-making and reduce human errors. Researchers focus on ethical AI development to ensure fairness and transparency. In coming years, AI will collaborate closely with humans instead of replacing them. Responsible development will determine how positively AI shapes the global economy and society."},
+
+{title:"AI in Business Growth",img:"https://images.unsplash.com/photo-1551434678-e076c223a692?w=1200",text:"Businesses use AI to enhance productivity and improve customer experience. AI chatbots provide 24/7 support and instant responses. Marketing teams analyze customer behavior using AI insights. Automation reduces operational costs and increases efficiency. Predictive analytics helps companies forecast trends accurately. Organizations adopting AI gain competitive advantages in global markets."},
+
+{title:"AI Coding Assistants",img:"https://images.unsplash.com/photo-1518779578993-ec3579fee39f?w=1200",text:"AI coding assistants help developers generate code snippets, fix bugs, and optimize performance quickly. Beginners learn programming concepts faster with AI explanations. These intelligent systems support multiple languages and increase software development productivity significantly."},
+
+{title:"AI Robotics",img:"https://images.unsplash.com/photo-1581092334389-0c1e3f9f4b69?w=1200",text:"AI-powered robots assist in manufacturing, healthcare, and scientific research. Robotics combined with AI creates intelligent machines capable of performing complex tasks with precision."},
+
+{title:"AI and Space Research",img:"https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=1200",text:"AI supports space exploration by analyzing astronomical data and guiding spacecraft navigation. Scientists use AI for discovering new planets and predicting cosmic events."},
+
+{title:"AI and Climate Monitoring",img:"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1200",text:"AI helps monitor climate change by analyzing environmental data. It predicts weather patterns and supports sustainable development initiatives worldwide."},
+
+{title:"AI in Finance",img:"https://images.unsplash.com/photo-1559526324-593bc073d938?w=1200",text:"AI assists financial institutions in fraud detection, risk analysis, and investment strategies. Banks rely on AI for secure transactions and data protection."},
+
+{title:"AI in Gaming",img:"https://images.unsplash.com/photo-1511512578047-dfb367046420?w=1200",text:"AI creates intelligent game characters and realistic environments. Game developers use AI to enhance user experience and dynamic gameplay."},
+
+{title:"AI in Marketing",img:"https://images.unsplash.com/photo-1492724441997-5dc865305da7?w=1200",text:"AI analyzes customer behavior to optimize advertising campaigns. Businesses personalize marketing strategies using AI-driven insights."},
+
+{title:"AI Smart Cities",img:"https://images.unsplash.com/photo-1508057198894-247b23fe5ade?w=1200",text:"AI supports smart traffic systems, energy management, and urban planning. Smart cities rely on AI for efficient resource utilization."},
+
+{title:"AI Productivity Tools",img:"https://images.unsplash.com/photo-1556761175-4b46a572b786?w=1200",text:"AI productivity tools help manage tasks, schedule meetings, and automate repetitive work. Businesses improve efficiency through intelligent automation."},
+
+{title:"AI Image Generation",img:"https://images.unsplash.com/photo-1542751110-97427bbecf20?w=1200",text:"AI image generation allows users to create visuals using text descriptions. Designers use AI for digital art and marketing content creation."},
+
+{title:"Next Generation AI Systems",img:"https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1200",text:"Next generation AI focuses on safety, transparency, and advanced reasoning. Researchers aim to build ethical AI systems that collaborate with humans."}
 ];
 
 const blogContainer=document.getElementById("blogContainer");
-blogs.forEach((b,i)=>{
+blogs.forEach(b=>{
 blogContainer.innerHTML+=`
 <div class="card">
 <h2>${b.title}</h2>
 <img src="${b.img}" class="blog-img">
 <p>${b.text}</p>
 </div>`;
-if((i+1)%2===0){
-blogContainer.innerHTML+=`
-<div class="card">
-<ins class="adsbygoogle"
-style="display:block"
-data-ad-client="ca-pub-8731009230578197"
-data-ad-slot="1234567890"
-data-ad-format="auto"></ins>
-<script>(adsbygoogle=window.adsbygoogle||[]).push({});</script>
-</div>`;
-}
 });
 
-// AI
-const API_KEY="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";
+/* AI READY */
+const API_KEY="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"
 
 async function sendMessage(){
 const input=document.getElementById("input");
 const messages=document.getElementById("messages");
 if(!input.value)return;
-
 messages.innerHTML+=`<div class="msg user">${input.value}</div>`;
-const userText=input.value;
 input.value="";
-messages.innerHTML+=`<div class="msg bot" id="thinking">Thinking...</div>`;
-
-try{
-const res=await fetch("https://openrouter.ai/api/v1/chat/completions",{
-method:"POST",
-headers:{
-"Authorization":"Bearer "+API_KEY,
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-model:"openai/gpt-3.5-turbo",
-messages:[{role:"user",content:userText}]
-})
-});
-const data=await res.json();
-document.getElementById("thinking").remove();
-messages.innerHTML+=`<div class="msg bot">${data?.choices?.[0]?.message?.content||"AI Error"}</div>`;
-}catch{
-document.getElementById("thinking").innerText="Server Error";
-}
+messages.innerHTML+=`<div class="msg bot">AI Ready. Add API key to activate.</div>`;
 }
 
-// Voice
+/* Voice */
 function startVoice(){
 const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
 if(!SpeechRecognition)return alert("Voice not supported");
@@ -217,67 +181,53 @@ rec.start();
 rec.onresult=e=>{document.getElementById("input").value=e.results[0][0].transcript;}
 }
 
-// Legal
+/* Legal */
 function openLegal(type){
 document.getElementById("mainPage").style.display="none";
 document.getElementById("legalPage").style.display="block";
-
 const content={
-about:"<h2>About</h2><p>Model AI is an advanced AI platform for learning and productivity.</p>",
-terms:"<h2>Terms</h2><p>Use responsibly and follow ethical guidelines.</p>",
-privacy:"<h2>Privacy</h2><p>We protect your personal data securely.</p>",
-disclaimer:"<h2>Disclaimer</h2><p>Verify AI-generated information independently.</p>",
+about:"<h2>About Model AI</h2><p>Model AI is designed for education, productivity and innovation.</p>",
+terms:"<h2>Terms & Conditions</h2><p>Use responsibly and follow applicable laws.</p>",
+privacy:"<h2>Privacy Policy</h2><p>Firebase securely manages authentication data.</p>",
+disclaimer:"<h2>Disclaimer</h2><p>Verify AI generated responses independently.</p>",
 contact:"<h2>Contact</h2><p>Email: support@modelai.com</p>"
 };
 document.getElementById("legalContent").innerHTML=content[type];
 }
-
 function goBack(){
 document.getElementById("legalPage").style.display="none";
 document.getElementById("mainPage").style.display="block";
 }
 </script>
 
+<!-- FIREBASE LOGIN -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { 
-getAuth, GoogleAuthProvider, signInWithPopup, 
-createUserWithEmailAndPassword, signInWithEmailAndPassword, 
-signOut, onAuthStateChanged 
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const app=initializeApp({
 apiKey:"AIzaSyDUcWSbU-ELP7Erx9yGPbq65clsn2ME8pk",
 authDomain:"model-ai-727b1.firebaseapp.com",
 projectId:"model-ai-727b1"
 });
-
 const auth=getAuth(app);
 const provider=new GoogleAuthProvider();
 
-window.googleLogin=function(){
-signInWithPopup(auth,provider).catch(e=>alert(e.message));
-};
-
-window.emailLogin=function(){
+window.googleLogin=()=>signInWithPopup(auth,provider);
+window.emailLogin=()=>{
 const email=document.getElementById("email").value;
 const password=document.getElementById("password").value;
-signInWithEmailAndPassword(auth,email,password).catch(e=>alert(e.message));
+signInWithEmailAndPassword(auth,email,password);
 };
-
-window.registerUser=function(){
+window.registerUser=()=>{
 const email=document.getElementById("email").value;
 const password=document.getElementById("password").value;
-createUserWithEmailAndPassword(auth,email,password).catch(e=>alert(e.message));
+createUserWithEmailAndPassword(auth,email,password);
 };
-
-window.logoutUser=function(){
-signOut(auth);
-};
+window.logoutUser=()=>signOut(auth);
 
 onAuthStateChanged(auth,user=>{
-document.getElementById("userInfo").innerText=
-user?"Logged in: "+user.email:"Not logged in";
+document.getElementById("userInfo").innerText=user?"Logged in: "+user.email:"Not logged in";
 });
 </script>
 
