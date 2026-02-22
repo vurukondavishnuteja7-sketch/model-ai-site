@@ -21,7 +21,6 @@ text-align:center;
 padding:40px 20px;
 font-size:48px;
 font-weight:bold;
-letter-spacing:2px;
 }
 
 /* MENU BUTTON */
@@ -38,22 +37,34 @@ cursor:pointer;
 z-index:2000;
 }
 
-<!-- WHITE SIDEBAR LOGIN -->
-<div class="sidebar" id="sidebar">
-<h2>Login</h2>
+/* SIDEBAR WHITE */
+.sidebar{
+width:300px;
+background:#ffffff;
+color:#111;
+padding:25px;
+height:100vh;
+position:fixed;
+left:-320px;
+top:0;
+transition:0.3s ease;
+z-index:1500;
+box-shadow:3px 0 15px rgba(0,0,0,0.2);
+}
+.sidebar.active{left:0}
 
-<button onclick="googleLogin()">Login with Google</button>
+.sidebar h2{color:#2563eb;margin-top:0}
 
-<input type="email" placeholder="Enter Email">
-<input type="password" placeholder="Enter Password">
-<button>Email Login</button>
-
-<div id="userInfo" style="margin-top:10px;font-size:14px;">
-Not logged in
-</div>
-
-<button onclick="toggleSidebar()">Close</button>
-</div>
+.sidebar button{
+width:100%;
+margin-bottom:10px;
+padding:10px;
+background:#2563eb;
+border:none;
+border-radius:6px;
+color:white;
+cursor:pointer;
+}
 
 /* OVERLAY */
 .overlay{
@@ -62,7 +73,7 @@ top:0;
 left:0;
 width:100%;
 height:100%;
-background:rgba(0,0,0,0.5);
+background:rgba(0,0,0,0.4);
 display:none;
 z-index:1000;
 }
@@ -79,11 +90,7 @@ margin-bottom:25px;
 border-radius:10px;
 box-shadow:0 2px 8px rgba(0,0,0,0.08);
 }
-.blog-img{
-width:100%;
-border-radius:8px;
-margin-bottom:15px;
-}
+.blog-img{width:100%;border-radius:8px;margin-bottom:15px}
 
 /* CHAT */
 .messages{
@@ -110,10 +117,28 @@ padding:40px 20px;
 text-align:center;
 margin-top:50px;
 font-size:14px;
-line-height:1.6;
 }
-footer a{color:#4da3ff;text-decoration:none;margin:0 8px;}
-footer a:hover{text-decoration:underline}
+footer a{color:#4da3ff;margin:0 8px;cursor:pointer;text-decoration:none}
+
+/* LEGAL PAGE */
+.legal-page{
+display:none;
+padding:40px;
+max-width:900px;
+margin:auto;
+background:white;
+border-radius:10px;
+margin-top:40px;
+}
+.back-btn{
+background:#2563eb;
+color:white;
+padding:8px 15px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+margin-bottom:20px;
+}
 </style>
 </head>
 
@@ -133,12 +158,10 @@ footer a:hover{text-decoration:underline}
 
 <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
 
-<div class="main">
+<div class="main" id="mainContent">
 
-<!-- BLOGS -->
 <div id="blogContainer"></div>
 
-<!-- AI CHAT -->
 <div class="card">
 <h2>Ask Model AI</h2>
 <div id="messages" class="messages"></div>
@@ -151,16 +174,19 @@ footer a:hover{text-decoration:underline}
 
 </div>
 
+<!-- LEGAL PAGE SECTION -->
+<div class="legal-page" id="legalPage">
+<button class="back-btn" onclick="goBack()">⬅ Back to AI</button>
+<div id="legalContent"></div>
+</div>
+
 <footer>
 <p>© 2026 MODEL AI. All Rights Reserved.</p>
-<a href="#">About Us</a> |
-<a href="#">Terms & Conditions</a> |
-<a href="#">Privacy Policy</a> |
-<a href="#">Disclaimer</a> |
-<a href="#">Contact</a>
-
-<p style="margin-top:15px;">
-</p>
+<a onclick="openLegal('about')">About</a> |
+<a onclick="openLegal('terms')">Terms</a> |
+<a onclick="openLegal('privacy')">Privacy</a> |
+<a onclick="openLegal('disclaimer')">Disclaimer</a> |
+<a onclick="openLegal('contact')">Contact</a>
 </footer>
 
 <script>
@@ -169,64 +195,52 @@ const overlay=document.getElementById("overlay");
 const input=document.getElementById("input");
 const messages=document.getElementById("messages");
 
-// Sidebar toggle
 function toggleSidebar(){
 sidebar.classList.toggle("active");
 overlay.classList.toggle("show");
 }
 
-// Blog Data
+// BLOG DATA (100 WORDS EACH)
 const blogs=[
-{
-title:"AI Tools for Students",
+{title:"AI Tools for Students",
 img:"https://images.unsplash.com/photo-1509062522246-3755977927d7?w=1200",
-text:"Artificial Intelligence tools are transforming how students learn and study every day..."
-},
-{
-title:"AI in Education",
+text:"Artificial Intelligence tools help students improve productivity and learning efficiency. Modern AI platforms summarize chapters, generate notes, and solve complex problems instantly. Personalized AI tutors adapt lessons based on student performance and understanding level. These smart systems provide explanations in simple language, making learning easier and more engaging. AI also helps organize schedules and remind students about assignments and exams. With AI-powered educational tools, students can practice regularly and receive instant feedback. As technology advances, AI will continue transforming education by making knowledge more accessible, interactive, and personalized for learners worldwide."},
+
+{title:"AI in Education",
 img:"https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200",
-text:"Artificial Intelligence is reshaping the education system across the globe..."
-},
-{
-title:"Future of AI",
+text:"AI is reshaping the global education system by introducing smart learning solutions. Schools use AI software for automated grading, attendance tracking, and performance analysis. Virtual classrooms powered by AI provide real-time feedback and adaptive lessons. Teachers benefit from reduced administrative work, allowing more focus on mentoring students. AI identifies learning gaps early and suggests targeted improvements. Students receive personalized study recommendations. With digital transformation accelerating, AI-based education ensures better outcomes and prepares learners with future-ready skills required in a rapidly evolving technological world."},
+
+{title:"Future of AI",
 img:"https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=1200",
-text:"The future of Artificial Intelligence is incredibly powerful and transformative..."
-},
-{
-title:"AI Coding Assistants",
+text:"The future of Artificial Intelligence promises major advancements across industries. AI will revolutionize healthcare, finance, robotics, and transportation systems. Smart cities and autonomous vehicles are becoming reality. Businesses will rely heavily on AI-driven automation and analytics. Ethical AI development will remain crucial to ensure safety and fairness. As research progresses, AI systems will become more intelligent and reliable. The next decade will define how humanity integrates AI responsibly into everyday life."},
+
+{title:"AI Coding Assistants",
 img:"https://images.unsplash.com/photo-1518779578993-ec3579fee39f?w=1200",
-text:"AI coding assistants are changing how software developers work..."
-},
-{
-title:"AI Productivity",
+text:"AI coding assistants help developers write, debug, and optimize software faster. These tools understand multiple programming languages and generate accurate code snippets. Beginners can learn programming with AI explanations and suggestions. Companies benefit from reduced development time and improved productivity. AI-driven coding tools continue evolving, becoming essential companions for developers worldwide."},
+
+{title:"AI Productivity",
 img:"https://images.unsplash.com/photo-1556761175-4b46a572b786?w=1200",
-text:"AI productivity tools help individuals and businesses manage tasks efficiently..."
-},
-{
-title:"AI Image Generation",
+text:"AI productivity tools automate repetitive tasks and manage schedules efficiently. Smart assistants draft emails, summarize meetings, and track performance metrics. Automation reduces human errors and saves valuable time. Businesses use AI to improve workflow efficiency and strategic decision-making. These intelligent tools empower professionals to focus on innovation."},
+
+{title:"AI Image Generation",
 img:"https://images.unsplash.com/photo-1542751110-97427bbecf20?w=1200",
-text:"AI image generation technology uses deep learning models..."
-},
-{
-title:"AI Business Automation",
+text:"AI image generation uses deep learning models to create realistic visuals from text prompts. Designers use AI for digital art, marketing graphics, and concept designs. This technology enhances creativity and speeds up production processes. As AI models improve, image generation becomes more accurate and accessible."},
+
+{title:"AI Business Automation",
 img:"https://images.unsplash.com/photo-1551434678-e076c223a692?w=1200",
-text:"Businesses are increasingly adopting AI for automation..."
-},
-{
-title:"AI Healthcare",
+text:"Businesses adopt AI automation to improve efficiency and reduce operational costs. AI chatbots provide 24/7 customer support. Predictive analytics helps companies forecast trends and manage inventory effectively. Data-driven decision-making ensures competitive advantages in digital markets."},
+
+{title:"AI Healthcare",
 img:"https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b?w=1200",
-text:"AI is transforming healthcare through intelligent diagnostics..."
-},
-{
-title:"Earn Money with AI",
+text:"AI transforms healthcare by assisting in diagnostics and predictive analysis. Machine learning models analyze medical images for early disease detection. AI improves patient record management and hospital workflow optimization. Ethical implementation remains essential for patient privacy and safety."},
+
+{title:"Earn Money with AI",
 img:"https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=1200",
-text:"AI offers numerous opportunities to earn money online..."
-},
-{
-title:"Next Gen AI",
+text:"AI provides multiple income opportunities online. Freelancers use AI for content writing, graphic design, and coding. Entrepreneurs build AI-powered applications and digital products. Learning AI skills opens doors to high-paying careers in the digital economy."},
+
+{title:"Next Gen AI",
 img:"https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1200",
-text:"Next generation AI systems focus on safety, explainability, and advanced reasoning..."
-}
+text:"Next generation AI focuses on safety, fairness, and advanced reasoning capabilities. Researchers aim to reduce bias and improve explainability. AI will assist in climate modeling, scientific research, and space exploration while collaborating with humans for innovation."}
 ];
 
 const blogContainer=document.getElementById("blogContainer");
@@ -239,23 +253,21 @@ blogContainer.innerHTML+=`
 </div>`;
 });
 
-// Enter key send
+// ENTER KEY
 input.addEventListener("keydown",e=>{
 if(e.key==="Enter"){e.preventDefault();sendMessage();}
 });
 
-// AI
-const API_KEY="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";
+// AI (Replace with NEW API KEY)
+const API_KEY="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";
 
 async function sendMessage(){
-if(!API_KEY){alert("Add OpenRouter API Key");return;}
-
 const text=input.value.trim();
 if(!text)return;
 
 messages.innerHTML+=`<div class="msg user">${text}</div>`;
 input.value="";
-messages.innerHTML+=`<div class="msg bot" id="thinking">Thinking...</div>`;
+messages.innerHTML+=`<div class="msg bot">Thinking...</div>`;
 messages.scrollTop=messages.scrollHeight;
 
 try{
@@ -271,17 +283,16 @@ messages:[{role:"user",content:text}]
 })
 });
 const data=await res.json();
-document.getElementById("thinking").remove();
+messages.lastChild.remove();
 const reply=data?.choices?.[0]?.message?.content||"AI Error";
 messages.innerHTML+=`<div class="msg bot">${reply}</div>`;
 messages.scrollTop=messages.scrollHeight;
 speak(reply);
 }catch{
-document.getElementById("thinking").innerText="Server Error";
+messages.lastChild.innerText="Server Error";
 }
 }
 
-// Voice input
 function startVoice(){
 const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
 if(!SpeechRecognition){alert("Voice not supported");return;}
@@ -291,37 +302,33 @@ rec.start();
 rec.onresult=e=>{input.value=e.results[0][0].transcript;}
 }
 
-// Voice output
 function speak(text){
 if("speechSynthesis" in window){
 speechSynthesis.cancel();
 speechSynthesis.speak(new SpeechSynthesisUtterance(text));
 }
 }
-</script>
 
-<!-- FIREBASE LOGIN -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged }
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+// LEGAL PAGES
+function openLegal(type){
+document.getElementById("mainContent").style.display="none";
+document.getElementById("legalPage").style.display="block";
 
-const firebaseConfig={
-apiKey:"AIzaSyDUcWSbU-ELP7Erx9yGPbq65clsn2ME8pk",
-authDomain:"model-ai-727b1.firebaseapp.com",
-projectId:"model-ai-727b1"
+const content={
+about:"<h2>About Us</h2><p>Model AI is an intelligent AI platform designed for students and professionals worldwide.</p>",
+terms:"<h2>Terms & Conditions</h2><p>By using Model AI, you agree to comply with our usage policies and guidelines.</p>",
+privacy:"<h2>Privacy Policy</h2><p>We respect your privacy and protect your personal information securely.</p>",
+disclaimer:"<h2>Disclaimer</h2><p>Model AI provides AI-generated responses. Verify important information independently.</p>",
+contact:"<h2>Contact</h2><p>Email: support@modelai.online</p>"
 };
 
-const app=initializeApp(firebaseConfig);
-const auth=getAuth(app);
-const provider=new GoogleAuthProvider();
+document.getElementById("legalContent").innerHTML=content[type];
+}
 
-window.googleLogin=()=>signInWithPopup(auth,provider);
-
-onAuthStateChanged(auth,user=>{
-document.getElementById("userInfo").innerText=
-user?"Logged in: "+user.email:"Not logged in";
-});
+function goBack(){
+document.getElementById("legalPage").style.display="none";
+document.getElementById("mainContent").style.display="block";
+}
 </script>
 
 </body>
