@@ -1,0 +1,30 @@
+<!doctype html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><meta content="#f5f8fd" name="theme-color"/><title>Sign in — MODEL AI</title><meta content="Sign in or create a MODEL AI account." name="description"/><link href="/favicon.svg" rel="icon" type="image/svg+xml"/><link href="/assets/style.css?v=light-auth-20261017" rel="stylesheet"/><link href="/assets/dashboard.css?v=light-auth-20261017" rel="stylesheet"/><link href="/assets/auth.css?v=light-auth-20261017" rel="stylesheet"/></head>
+<body class="auth-page"><header class="auth-top"><a class="dash-brand" href="/"><span class="dash-logo"><img alt="" height="42" src="/assets/robot-mark.svg" width="42"/></span><span class="dash-brand-copy"><b>Model <span>AI</span></b><small>All Tools for Students &amp; Creators</small></span></a><a class="auth-back" href="/">← Back to tools</a></header><main class="auth-layout"><section class="auth-promo"><span class="auth-promo-mark">✦</span><p class="auth-eyebrow">YOUR EVERYDAY AI WORKSPACE</p><h1>One account.<br/><span>More possibilities.</span></h1><p>Sign in to MODEL AI and continue to your tools workspace. You can still use browser-based tools without signing in.</p><div class="auth-benefits"><span>✓ Student &amp; creator tools</span><span>✓ Google or email sign-in</span><span>✓ Your account, your choice</span></div><div class="auth-orbit orbit-one"></div><div class="auth-orbit orbit-two"></div></section><section class="auth-card" id="login-card"><div class="auth-card-icon">👋</div><h2 id="auth-title">Welcome back</h2><p id="auth-subtitle">Sign in to continue to your workspace.</p><div aria-live="polite" class="auth-status" hidden="" id="auth-status" role="status"></div><button class="google-button" data-auth-action="" id="google-signin" type="button"><span class="google-g">G</span> Continue with Google</button><div class="auth-divider"><span>or continue with email</span></div><form id="auth-form"><label for="auth-name" hidden="" id="name-field">Your name</label><input autocomplete="name" hidden="" id="auth-name" name="name" placeholder="Your name" type="text"/><label for="auth-email">Email address</label><input autocomplete="email" id="auth-email" name="email" placeholder="you@example.com" required="" type="email"/><label for="auth-password">Password</label><input autocomplete="current-password" id="auth-password" minlength="6" name="password" placeholder="At least 6 characters" required="" type="password"/><div class="auth-form-row"><button class="text-button" id="password-reset" type="button">Forgot password?</button></div><button class="auth-submit" data-auth-action="" id="auth-submit" type="submit">Sign in</button></form><button class="auth-mode" data-next="create" id="auth-mode" type="button">New to MODEL AI? Create an account</button><p class="auth-legal">By continuing, you agree to our <a href="/terms.html">Terms</a> and <a href="/privacy.html">Privacy Policy</a>.</p></section></main><footer class="auth-footer"><span>© <span data-year="">2026</span> MODEL AI</span><span><a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a> · <a href="/contact.html">Contact</a></span></footer><script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const button = $('auth-mode');
+  const status = $('auth-status');
+  const setStatus = (message, kind = 'info') => { if (!status) return; status.textContent = message; status.dataset.kind = kind; status.hidden = false; };
+  function setMode(mode) {
+    const creating = mode === 'create';
+    if ($('auth-title')) $('auth-title').textContent = creating ? 'Create your MODEL AI account' : 'Welcome back';
+    if ($('auth-subtitle')) $('auth-subtitle').textContent = creating ? 'Create an account to get started.' : 'Sign in to continue to your workspace.';
+    const nameLabel = $('name-field'), nameInput = $('auth-name'), password = $('auth-password'), submit = $('auth-submit'), reset = document.querySelector('.auth-form-row');
+    if (nameLabel) nameLabel.hidden = !creating;
+    if (nameInput) { nameInput.hidden = !creating; nameInput.required = creating; nameInput.autocomplete = 'name'; }
+    if (password) password.autocomplete = creating ? 'new-password' : 'current-password';
+    if (submit) submit.textContent = creating ? 'Create account' : 'Sign in';
+    if (reset) reset.hidden = creating;
+    if (button) { button.textContent = creating ? 'Already have an account? Sign in' : 'New to MODEL AI? Create an account'; button.dataset.next = creating ? 'signin' : 'create'; button.dataset.current = creating ? 'create' : 'signin'; button.setAttribute('aria-pressed', String(creating)); }
+    if (status) status.hidden = true;
+  }
+  if (button) { window.__MODEL_AI_LOGIN_UI_BOUND = true; button.addEventListener('click', (event) => { event.preventDefault(); setMode(button.dataset.next || 'create'); }); setMode('signin'); }
+  const google = $('google-signin');
+  if (google) google.addEventListener('click', () => setTimeout(() => { if (!window.__MODEL_AI_AUTH_READY) setStatus('Login code did not initialize. Refresh the page; if this continues, check the latest deployment and browser Console.', 'error'); }, 700), true);
+  const form = $('auth-form');
+  if (form) form.addEventListener('submit', (event) => { if (!window.__MODEL_AI_AUTH_READY) { event.preventDefault(); setStatus('Login code did not initialize. Please refresh and try again.', 'error'); } }, true);
+  window.addEventListener('load', () => setTimeout(() => { if (!window.__MODEL_AI_AUTH_READY) setStatus('The authentication script did not load. Check /assets/firebase-auth.js in the latest deployed files.', 'error'); }, 1800));
+})();
+</script><script defer src="/assets/firebase-config.js?v=complete-20261017"></script><script defer src="/assets/firebase-auth.js?v=complete-20261017"></script></body></html>
