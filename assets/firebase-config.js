@@ -6,12 +6,12 @@
 (() => {
   'use strict';
   const config = {
-    apiKey: 'AIzaSyDX1ru4Tt19yqfIe3oKUtc3yn5v_155fms',
-    authDomain: 'modelaitools.firebaseapp.com',
-    projectId: 'modelaitools',
-    appId: '1:833872426359:web:67a321c8b5619ca79d5d72',
-    messagingSenderId: '833872426359',
-    measurementId: 'G-DZM6GER0W6'
+    apiKey: 'AIzaSyDUcWSbU-ELP7Erx9yGPbq65clsn2ME8pk',
+    authDomain: 'model-ai-727b1.firebaseapp.com',
+    projectId: 'model-ai-727b1',
+    appId: '1:970799402645:web:4e2a93dbacbfd6ee97d59c',
+    messagingSenderId: '970799402645',
+    measurementId: 'G-0EW8BHNTH3'
   };
   window.MODEL_AI_FIREBASE_CONFIG = config;
   window.MODEL_AI_FIREBASE_CONFIGURED = Object.values(config).every(
